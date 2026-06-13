@@ -6,19 +6,63 @@ Runnable now: `/health` works; `/analyze` returns a contract-valid stub
 
 from __future__ import annotations
 
+import logging
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Form, UploadFile
+from fastapi import Depends, FastAPI, Form, UploadFile
+from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from factorylens import __version__
+from factorylens.db import get_db, init_db
 from factorylens.schemas import AnalysisResponse
 
-app = FastAPI(title="FactoryLens AI", version=__version__)
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Initialize DB objects when configured while preserving app liveness."""
+
+    try:
+        await run_in_threadpool(init_db)
+    except (OSError, SQLAlchemyError, ValidationError):
+        logger.warning(
+            "Database initialization did not complete; readiness is unavailable."
+        )
+    yield
+
+
+app = FastAPI(
+    title="FactoryLens AI",
+    version=__version__,
+    lifespan=lifespan,
+)
 
 
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "version": __version__}
+
+
+@app.get("/readyz", response_model=None)
+def readiness(db: Session = Depends(get_db)) -> JSONResponse:
+    """Report database readiness without exposing connection details."""
+
+    try:
+        db.execute(text("SELECT 1"))
+    except SQLAlchemyError:
+        return JSONResponse(
+            status_code=503,
+            content={"status": "not_ready", "db": "down"},
+        )
+    return JSONResponse(content={"status": "ready", "db": "up"})
 
 
 @app.post("/analyze", response_model=AnalysisResponse)

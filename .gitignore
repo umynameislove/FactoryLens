@@ -36,6 +36,7 @@ outputs/
 # Secrets / env
 .env
 .env.*
+!.env.example
 *.key
 
 # OS / editor
