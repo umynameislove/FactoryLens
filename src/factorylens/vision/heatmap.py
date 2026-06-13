@@ -41,6 +41,7 @@ def extract_regions(
     score_map: np.ndarray,
     threshold: float,
     min_area: int = 1,
+    image_shape: tuple[int, int] | None = None,
 ) -> list[dict[str, object]]:
     """Extract connected high-score regions from a normalized score map."""
 
@@ -67,7 +68,8 @@ def extract_regions(
 
         component_scores = normalized[labels == component_id]
         score = float(np.clip(component_scores.max(initial=0.0), 0.0, 1.0))
-        regions.append({"bbox": [x, y, x + width, y + height], "score": score})
+        bbox = _scale_bbox([x, y, x + width, y + height], score_map.shape, image_shape)
+        regions.append({"bbox": bbox, "score": score})
 
     return sorted(regions, key=lambda region: float(region["score"]), reverse=True)
 
@@ -81,3 +83,24 @@ def _normalize_score_map(score_map: np.ndarray) -> np.ndarray:
         finite = (finite - min_value) / span
 
     return np.clip(finite, 0.0, 1.0)
+
+
+def _scale_bbox(
+    bbox: list[int],
+    score_shape: tuple[int, int],
+    image_shape: tuple[int, int] | None,
+) -> list[int]:
+    if image_shape is None:
+        return bbox
+
+    score_height, score_width = score_shape
+    image_height, image_width = image_shape
+    x1, y1, x2, y2 = bbox
+    x_scale = image_width / max(score_width, 1)
+    y_scale = image_height / max(score_height, 1)
+    return [
+        int(round(x1 * x_scale)),
+        int(round(y1 * y_scale)),
+        int(round(x2 * x_scale)),
+        int(round(y2 * y_scale)),
+    ]

@@ -30,6 +30,19 @@ def test_extract_regions_filters_small_components():
     assert regions[0]["bbox"] == [3, 3, 6, 6]
 
 
+def test_extract_regions_can_scale_bbox_to_image_pixels():
+    score_map = np.zeros((10, 20), dtype=np.float32)
+    score_map[2:5, 4:10] = 0.9
+
+    regions = extract_regions(
+        score_map,
+        threshold=0.7,
+        image_shape=(100, 200),
+    )
+
+    assert regions[0]["bbox"] == [40, 20, 100, 50]
+
+
 def test_make_heatmap_writes_overlay_png(tmp_path):
     image_path = tmp_path / "sample.png"
     image = np.zeros((24, 32, 3), dtype=np.uint8)
