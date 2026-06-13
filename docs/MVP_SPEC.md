@@ -76,11 +76,11 @@ def generate_engineering_report(ctx: ReportInput) -> ReportResult
 6. `generate_engineering_report` → Markdown report (later PDF) + API JSON.
 7. Streamlit dashboard renders image, heatmap, table, hypothesis, report.
 
-## Dataset subset (proposed — confirm)
+## Dataset subset (CONFIRMED 2026-06-13)
 
 MVTec AD, **1 category to start: `hazelnut`** (clear defect types: crack, cut,
 hole, print) + 10–20 demo images. Add a 2nd category (`metal_nut` or `bottle`)
-only if Phase 2 baseline works. **Assumption to confirm with Bao.**
+only if Phase 2 baseline works. **Confirmed by Bao.**
 
 ## Acceptance criteria (MVP demo = PASS)
 
