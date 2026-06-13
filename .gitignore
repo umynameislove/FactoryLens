@@ -22,8 +22,8 @@ env/
 htmlcov/
 
 # Data / models / large artifacts (keep repo light)
-data/
-datasets/
+/data/
+/datasets/
 *.pt
 *.pth
 *.onnx
