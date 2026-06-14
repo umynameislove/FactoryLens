@@ -54,3 +54,22 @@ class AnalysisResponse(BaseModel):
     next_actions: list[str] = Field(default_factory=list)
     report_markdown: str | None = None
     warnings: list[str] = Field(default_factory=list)
+
+
+class UploadImageResponse(BaseModel):
+    image_id: str
+    stored_path: str
+    content_type: str
+    size_bytes: int = Field(ge=0)
+
+
+class LogIngestError(BaseModel):
+    row: int
+    error: str
+
+
+class UploadLogsResponse(BaseModel):
+    rows_received: int = Field(ge=0)
+    rows_ingested: int = Field(ge=0)
+    rows_rejected: int = Field(ge=0)
+    errors: list[LogIngestError] = Field(default_factory=list)

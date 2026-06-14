@@ -10,6 +10,7 @@ dependencies = [
     "pydantic>=2.6",
     "pydantic-settings>=2.2",
     "python-multipart>=0.0.9",
+    "pillow>=10.0",
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3.1",
 ]
@@ -18,7 +19,7 @@ dependencies = [
 # so the tech-stack table in _tracking/TRACKING.md stays honest.
 [project.optional-dependencies]
 db = ["pgvector>=0.2"]
-vision = ["torch", "torchvision", "opencv-python-headless", "numpy", "pillow"]
+vision = ["torch", "torchvision", "opencv-python-headless", "numpy"]
 agent = ["langchain>=0.2", "langchain-openai>=0.1", "openai>=1.0", "faiss-cpu"]
 dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
 

@@ -13,6 +13,9 @@ COPY --chown=appuser:appuser src ./src
 
 RUN pip install --no-cache-dir -e .
 
+RUN mkdir -p /app/data/uploads \
+    && chown -R appuser:appuser /app/data
+
 USER appuser
 
 EXPOSE 8000

@@ -20,6 +20,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from factorylens import __version__
+from factorylens.api.uploads import router as uploads_router
 from factorylens.db import get_db, init_db
 from factorylens.schemas import AnalysisResponse
 
@@ -44,6 +45,7 @@ app = FastAPI(
     version=__version__,
     lifespan=lifespan,
 )
+app.include_router(uploads_router)
 
 
 @app.get("/health")
