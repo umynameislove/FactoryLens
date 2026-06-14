@@ -64,6 +64,21 @@ docker compose down
 The current schema is created idempotently with `factorylens.db.init_db`.
 Alembic migrations are intentionally deferred until the schema starts evolving.
 
+## Seed demo data
+
+Load the committed hazelnut sample logs after the local stack is running:
+
+```bash
+docker compose up -d
+docker compose exec app python -m factorylens.db.init_db
+docker compose exec app python -m factorylens.seed
+# Replace existing test-log rows:
+docker compose exec app python -m factorylens.seed --reset
+```
+
+Seeding is idempotent without `--reset`. The MVTec image manifest belongs to
+the vision pipeline and is not loaded into the database by this command.
+
 ## Layout
 
 ```
