@@ -6,6 +6,7 @@ import csv
 import io
 import math
 from datetime import datetime
+from typing import BinaryIO
 
 from fastapi import UploadFile
 from sqlalchemy.exc import SQLAlchemyError
@@ -43,7 +44,18 @@ def parse_and_ingest_logs(
 ) -> UploadLogsResponse:
     """Validate a bounded CSV and insert all valid rows in one transaction."""
 
-    payload = _read_bounded(file, settings.max_logs_mb)
+    payload = read_bounded_log_bytes(file.file, settings.max_logs_mb)
+    return ingest_log_bytes(payload, db, settings)
+
+
+def ingest_log_bytes(
+    payload: bytes,
+    db: Session,
+    settings: Settings,
+) -> UploadLogsResponse:
+    """Validate CSV bytes and insert all valid rows in one transaction."""
+
+    _validate_payload_size(payload, settings.max_logs_mb)
     reader = _make_reader(payload)
     _validate_header(reader)
 
@@ -85,18 +97,25 @@ def parse_and_ingest_logs(
     )
 
 
-def _read_bounded(file: UploadFile, max_size_mb: int) -> bytes:
+def read_bounded_log_bytes(stream: BinaryIO, max_size_mb: int) -> bytes:
+    """Read a binary CSV stream without exceeding the configured byte cap."""
+
     max_bytes = max_size_mb * _BYTES_PER_MB
     payload = io.BytesIO()
     size_bytes = 0
 
-    while chunk := file.file.read(_CHUNK_SIZE):
+    while chunk := stream.read(_CHUNK_SIZE):
         size_bytes += len(chunk)
         if size_bytes > max_bytes:
             raise LogValidationError(f"CSV exceeds the {max_size_mb} MB limit.")
         payload.write(chunk)
 
     return payload.getvalue()
+
+
+def _validate_payload_size(payload: bytes, max_size_mb: int) -> None:
+    if len(payload) > max_size_mb * _BYTES_PER_MB:
+        raise LogValidationError(f"CSV exceeds the {max_size_mb} MB limit.")
 
 
 def _make_reader(payload: bytes) -> csv.DictReader:

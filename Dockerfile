@@ -10,6 +10,8 @@ RUN groupadd --system appuser \
 
 COPY --chown=appuser:appuser pyproject.toml README.md ./
 COPY --chown=appuser:appuser src ./src
+COPY --chown=appuser:appuser assets/sample_logs/hazelnut_test_logs.csv \
+    ./assets/sample_logs/hazelnut_test_logs.csv
 
 RUN pip install --no-cache-dir -e .
 
