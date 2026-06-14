@@ -37,6 +37,17 @@ no free-form tool creation.
 `test_logs` CSV columns: `unit_id, timestamp, station, measure_name,
 measure_value, spec_low, spec_high, pass_fail`.
 
+## Ingestion endpoints
+
+- `POST /uploads/image`: multipart field `file`; accepts one verified PNG/JPEG
+  up to `MAX_IMAGE_MB`. Returns `image_id, stored_path, content_type,
+  size_bytes`. The path is server-generated and relative.
+- `POST /uploads/logs`: multipart field `file`; accepts one UTF-8 CSV up to
+  `MAX_LOGS_MB` and `MAX_LOG_ROWS`. The header must contain exactly the eight
+  `test_logs` columns above. Valid rows are inserted in one transaction; invalid
+  rows are skipped and reported as `row, error` (first 50 errors only). Returns
+  `rows_received, rows_ingested, rows_rejected, errors`.
+
 ## Output schema (`AnalysisResponse`)
 
 `request_id, category, anomaly_score (0–1), defect_label, defect_regions
