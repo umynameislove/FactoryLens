@@ -6,14 +6,17 @@ logs and known-issue docs) and a question; get an anomaly assessment, related
 known issues, a root-cause hypothesis, next actions, and a structured
 engineering report.
 
-> Status: **Phase 1 backend foundation** (FastAPI, locked Pydantic contract,
-> SQLAlchemy database layer, and local Docker stack; no AI yet). See
-> `docs/MVP_SPEC.md` for the product contract and the 5 planned agent tools.
+> **Status — Phase 1 (backend foundation).** FastAPI, a locked Pydantic
+> contract, the SQLAlchemy + PostgreSQL/pgvector data layer, and a local Docker
+> stack are in place. The LangChain agent layer and the five analysis tools are
+> the next milestone. See `docs/MVP_SPEC.md` for the full product contract.
 
-## Stack (target)
+## Tech stack
 
-LangChain · FastAPI · PostgreSQL + pgvector · OpenAI · Docker. Dataset: MVTec AD
-subset (`hazelnut` first).
+- **Backend:** FastAPI · SQLAlchemy 2.0 · PostgreSQL + pgvector
+- **Runtime:** Docker · docker-compose
+- **AI (in progress):** LangChain · OpenAI
+- **Dataset:** MVTec AD — `hazelnut` subset
 
 ## Quickstart
 
