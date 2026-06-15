@@ -283,9 +283,10 @@ def write_results_markdown(
     settings: dict[str, object],
 ) -> None:
     label_stats = _label_stats(samples)
+    per_defect_metrics = _per_defect_metrics(samples)
     verdict = _verdict(auroc, metrics.accuracy)
     lines = [
-        "# Hazelnut Baseline Mini-Eval",
+        "# Hazelnut Baseline Eval",
         "",
         f"Verdict: {verdict}",
         "",
@@ -305,6 +306,9 @@ def write_results_markdown(
         f"- Accuracy at threshold: {metrics.accuracy:.3f}",
         f"- Precision: {metrics.precision:.3f}",
         f"- Recall: {metrics.recall:.3f}",
+        f"- Recommended demo threshold: `anomaly_threshold = {metrics.threshold:.4f}`",
+        "- Đề xuất `anomaly_threshold = "
+        f"{metrics.threshold:.4f}` cho Bao cập nhật `config.py`.",
         "",
         "| Metric | Count |",
         "|---|---:|",
@@ -322,6 +326,29 @@ def write_results_markdown(
         stats = label_stats[label]
         lines.append(
             f"| {label} | {stats['count']} | {stats['mean']:.4f} | {stats['min']:.4f} | {stats['max']:.4f} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Per-Defect Threshold Check",
+            "",
+            "Each row compares one defect type against all good samples. These "
+            "thresholds are diagnostic only; keep the overall threshold as the "
+            "single demo recommendation unless Bao decides otherwise.",
+            "",
+            "| Defect type | Threshold | Accuracy | Precision | Recall | TP | FP | TN | FN |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for label in DEFECT_LABELS:
+        label_metrics = per_defect_metrics[label]
+        lines.append(
+            f"| {label} | {label_metrics.threshold:.4f} | "
+            f"{label_metrics.accuracy:.3f} | {label_metrics.precision:.3f} | "
+            f"{label_metrics.recall:.3f} | {label_metrics.true_positive} | "
+            f"{label_metrics.false_positive} | {label_metrics.true_negative} | "
+            f"{label_metrics.false_negative} |"
         )
 
     lines.extend(
@@ -350,7 +377,8 @@ def write_results_markdown(
             "## Notes",
             "",
             "- This is a compact CPU-oriented baseline, not a SOTA detector.",
-            "- Threshold is chosen from this mini-eval and should be treated as a demo default.",
+            "- Threshold is chosen from this eval and should be treated as a demo default.",
+            "- False positives/false negatives are still expected because score ranges overlap.",
             "- B6 region counts are smoke evidence only; visual localization quality still needs review.",
             "",
         ]
@@ -408,6 +436,15 @@ def _label_stats(samples: list[SampleScore]) -> dict[str, dict[str, float]]:
             "max": float(np.max(scores)),
         }
     return stats
+
+
+def _per_defect_metrics(samples: list[SampleScore]) -> dict[str, ThresholdMetrics]:
+    metrics: dict[str, ThresholdMetrics] = {}
+    good_samples = [sample for sample in samples if not sample.is_defect]
+    for label in DEFECT_LABELS:
+        label_samples = [sample for sample in samples if sample.label == label]
+        metrics[label] = choose_threshold([*good_samples, *label_samples])
+    return metrics
 
 
 def _verdict(auroc: float, accuracy: float) -> str:
