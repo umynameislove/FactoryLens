@@ -58,11 +58,19 @@ evidence[]}, next_actions [str], report_markdown, warnings []`.
 All tool outputs are Pydantic models. If no API key → deterministic fallback
 (template hypothesis + retrieval-only report), flagged in `warnings`.
 
+`ImageDefectResult` is defined in `src/factorylens/schemas.py` with
+`anomaly_score`, `defect_label`, `defect_regions`, `heatmap_path`, and
+`warnings`. The standalone tool returns this contract without calling the
+database or network and is not wired into `/analyze` yet.
+
 ## 5 Agent tool signatures (bounded, Pydantic I/O)
 
 ```python
-def analyze_image_defect(image_path: str, category: str | None) -> ImageDefectResult
-# -> anomaly_score, defect_label, regions[bbox,score], heatmap_path
+def analyze_image_defect(
+    image_path: str,
+    category: str | None = None,
+) -> ImageDefectResult
+# -> anomaly_score, defect_label, defect_regions[bbox,score], heatmap_path, warnings
 
 def query_test_logs(question: str, log_table: str) -> TestLogResult
 # -> generated_sql, rows[], summary, failed_measures[]  (read-only SQL, allow-listed)

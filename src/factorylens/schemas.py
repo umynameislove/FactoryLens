@@ -28,6 +28,16 @@ class DefectRegion(BaseModel):
     score: float = Field(ge=0.0, le=1.0)
 
 
+class ImageDefectResult(BaseModel):
+    """Structured output from the standalone image-defect tool."""
+
+    anomaly_score: float = Field(ge=0.0, le=1.0)
+    defect_label: str | None = None
+    defect_regions: list[DefectRegion] = Field(default_factory=list)
+    heatmap_path: str | None = None
+    warnings: list[str] = Field(default_factory=list)
+
+
 class KnownIssueMatch(BaseModel):
     title: str
     snippet: str
