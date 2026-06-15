@@ -27,6 +27,9 @@ def test_settings_defaults_are_local_and_non_secret() -> None:
     assert settings.max_image_mb == 10
     assert settings.max_logs_mb == 5
     assert settings.max_log_rows == 100_000
+    assert settings.vision_memory_bank_path == "data/memory_bank.npz"
+    assert settings.anomaly_threshold == 0.3884
+    assert settings.heatmap_dir == "heatmaps"
 
 
 @pytest.mark.parametrize(
@@ -42,10 +45,24 @@ def test_upload_limits_must_be_positive(field_name: str) -> None:
         )
 
 
-def test_upload_dir_must_not_be_blank() -> None:
+@pytest.mark.parametrize(
+    "field_name",
+    ["upload_dir", "vision_memory_bank_path", "heatmap_dir"],
+)
+def test_path_settings_must_not_be_blank(field_name: str) -> None:
     with pytest.raises(ValidationError):
         Settings(
             database_url="sqlite://",
-            upload_dir="   ",
+            **{field_name: "   "},
+            _env_file=None,
+        )
+
+
+@pytest.mark.parametrize("threshold", [-0.01, 1.01])
+def test_anomaly_threshold_must_be_unit_interval(threshold: float) -> None:
+    with pytest.raises(ValidationError):
+        Settings(
+            database_url="sqlite://",
+            anomaly_threshold=threshold,
             _env_file=None,
         )

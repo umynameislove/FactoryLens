@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     max_image_mb: int = Field(default=10, gt=0)
     max_logs_mb: int = Field(default=5, gt=0)
     max_log_rows: int = Field(default=100_000, gt=0)
+    vision_memory_bank_path: str = Field(
+        default="data/memory_bank.npz",
+        min_length=1,
+    )
+    anomaly_threshold: float = Field(default=0.3884, ge=0.0, le=1.0)
+    heatmap_dir: str = Field(default="heatmaps", min_length=1)
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -27,11 +33,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    @field_validator("upload_dir")
+    @field_validator("upload_dir", "vision_memory_bank_path", "heatmap_dir")
     @classmethod
-    def validate_upload_dir(cls, value: str) -> str:
+    def validate_path_setting(cls, value: str) -> str:
         if not value.strip():
-            raise ValueError("upload_dir must not be blank")
+            raise ValueError("path setting must not be blank")
         return value.strip()
 
 
