@@ -6,10 +6,10 @@ logs and known-issue docs) and a question; get an anomaly assessment, related
 known issues, a root-cause hypothesis, next actions, and a structured
 engineering report.
 
-> **Status — Phase 1 (backend foundation).** FastAPI, a locked Pydantic
+> **Status — Phase 1 backend foundation complete.** FastAPI, a locked Pydantic
 > contract, the SQLAlchemy + PostgreSQL/pgvector data layer, and a local Docker
-> stack are in place. The LangChain agent layer and the five analysis tools are
-> the next milestone. See `docs/MVP_SPEC.md` for the full product contract.
+> stack are in place, including secure uploads and idempotent demo-data seeding.
+> The bounded tools and agent integration are the next milestone.
 
 ## Tech stack
 
@@ -78,6 +78,44 @@ docker compose exec app python -m factorylens.seed --reset
 
 Seeding is idempotent without `--reset`. The MVTec image manifest belongs to
 the vision pipeline and is not loaded into the database by this command.
+
+## Architecture
+
+The solid nodes below are implemented today. Dotted nodes are either the
+contract-valid `/analyze` stub or planned integrations; they are not presented
+as running features.
+
+```mermaid
+flowchart LR
+    Client["API consumer"]:::external
+    Uploads["Image and CSV uploads"]:::implemented
+    Analyze["/analyze stub"]:::stub
+    Services["Storage, ingest, seed, config"]:::implemented
+    DB["PostgreSQL + test_logs<br/>pgvector extension enabled"]:::implemented
+    Files["Local uploads"]:::implemented
+    Vision["Vision baseline<br/>standalone"]:::stub
+    Agent["Bounded agent and five tools"]:::planned
+    Vectors["Known-issue vectors"]:::planned
+    UI["Streamlit dashboard"]:::planned
+
+    Client --> Uploads
+    Client --> Analyze
+    Uploads --> Services
+    Services --> DB
+    Services --> Files
+    Analyze -. "planned integration" .-> Agent
+    Agent -. "planned wrapper" .-> Vision
+    Agent -. "planned retrieval" .-> Vectors
+    UI -. "planned API client" .-> Analyze
+
+    classDef implemented fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b1b1b;
+    classDef stub fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,stroke-dasharray:2 3,color:#1b1b1b;
+    classDef planned fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,stroke-dasharray:7 5,color:#1b1b1b;
+    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#1b1b1b;
+```
+
+See [Architecture](docs/architecture.md) for the complete component map,
+implemented request flows, target `/analyze` sequence, and evidence table.
 
 ## Layout
 
