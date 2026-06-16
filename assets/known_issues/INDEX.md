@@ -14,3 +14,7 @@ against the image, logs, line conditions, and current SOP before acting.
 | KI-006 | hole | Impact chip mistaken as hole | medium | KI-006-hole-impact-chip.md |
 | KI-007 | print | Ink or belt transfer mark | low | KI-007-print-transfer-mark.md |
 | KI-008 | print | Repeated print-like mark from dirty contact surface | medium | KI-008-print-dirty-contact.md |
+| KI-009 | crack | Roller pressure hairline crack | high | KI-009-crack-roller-pressure.md |
+| KI-010 | cut | Knife nick from trimming station | high | KI-010-cut-trimming-nick.md |
+| KI-011 | hole | Pinhole from shell weak spot | medium | KI-011-hole-shell-weak-spot.md |
+| KI-012 | print | Label ink smudge from packaging contact | low | KI-012-print-packaging-smudge.md |
