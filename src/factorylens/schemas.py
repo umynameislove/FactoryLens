@@ -6,7 +6,7 @@ These models lock the API/tool contract for Phase 1 before any AI is added.
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
-
+from typing import Literal
 
 # --- API request / response ------------------------------------------------
 
@@ -83,3 +83,30 @@ class UploadLogsResponse(BaseModel):
     rows_ingested: int = Field(ge=0)
     rows_rejected: int = Field(ge=0)
     errors: list[LogIngestError] = Field(default_factory=list)
+
+class QueryTestLogsInput(BaseModel):
+    unit_id: str | None = None
+    station: str | None = None
+    measure_name: str | None = None
+    pass_fail: Literal["PASS","FAIL"] | None = None
+    failed_only: bool = False
+    limit: int = Field(default = 100, ge = 1, le = 1000)
+
+class TestLogRow(BaseModel):
+    unit_id: str
+    station: str
+    measure_name: str
+    measure_value: float
+    spec_low: float | None = None
+    spec_high: float | None = None
+    pass_fail: str
+    timestamp: str
+
+
+class TestLogResult(BaseModel):
+    generated_sql: str
+    rows: list[TestLogRow] = Field(default_factory=list)
+    row_count: int = 0
+    failed_measures: list[str] = Field(default_factory=list)
+    summary: str = ""
+    warnings: list[str] = Field(default_factory=list)
