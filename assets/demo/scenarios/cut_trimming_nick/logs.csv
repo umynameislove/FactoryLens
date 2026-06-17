@@ -1,0 +1,6 @@
+unit_id,timestamp,station,measure_name,measure_value,spec_low,spec_high,pass_fail
+HZ-SCEN-CUT-015,2026-06-17T09:18:00+00:00,trimming_station_01,blade_clearance_mm,0.18,0.30,0.80,FAIL
+HZ-SCEN-CUT-015,2026-06-17T09:18:00+00:00,trimming_station_01,guide_burr_score,0.82,0.00,0.30,FAIL
+HZ-SCEN-CUT-015,2026-06-17T09:18:00+00:00,vision_station_01,surface_defect_area,2.89,0.00,2.50,FAIL
+HZ-SCEN-CUT-015,2026-06-17T09:18:00+00:00,weigh_station_01,weight_g,2.77,2.20,3.40,PASS
+HZ-SCEN-CUT-015,2026-06-17T09:18:00+00:00,color_station_01,color_index,51.4,42.0,58.0,PASS
