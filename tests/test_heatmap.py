@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import cv2
 import numpy as np
 import pytest
 
-from factorylens.vision.heatmap import extract_regions, make_heatmap
+cv2 = pytest.importorskip("cv2")
+
+from factorylens.vision.heatmap import extract_regions, make_heatmap  # noqa: E402
 
 
 def test_extract_regions_returns_valid_bbox():

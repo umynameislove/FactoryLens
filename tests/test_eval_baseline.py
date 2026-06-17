@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import pytest
 
+pytest.importorskip("cv2")
+pytest.importorskip("torch")
+pytest.importorskip("torchvision")
+
 from factorylens.vision.eval_baseline import (
     SampleScore,
     choose_threshold,

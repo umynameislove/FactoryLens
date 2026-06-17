@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
+
+pytest.importorskip("torch")
+pytest.importorskip("torchvision")
 
 from factorylens.vision.anomaly import build_memory_bank, load_memory_bank, score_image
 
