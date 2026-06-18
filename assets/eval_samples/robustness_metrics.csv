@@ -1,0 +1,175 @@
+image_path,label,perturbation,level,level_order,baseline_score,perturbed_score,score_drift,absolute_drift,baseline_verdict,perturbed_verdict,verdict_flipped
+test/good/000.png,good,rotation,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,rotation,-15 deg,1,0.373002,0.375290,+0.002288,0.002288,GOOD,GOOD,0
+test/good/000.png,good,rotation,-10 deg,2,0.373002,0.372654,-0.000347,0.000347,GOOD,GOOD,0
+test/good/000.png,good,rotation,-5 deg,3,0.373002,0.370929,-0.002073,0.002073,GOOD,GOOD,0
+test/good/000.png,good,rotation,+5 deg,4,0.373002,0.370308,-0.002694,0.002694,GOOD,GOOD,0
+test/good/000.png,good,rotation,+10 deg,5,0.373002,0.370886,-0.002116,0.002116,GOOD,GOOD,0
+test/good/000.png,good,rotation,+15 deg,6,0.373002,0.372496,-0.000506,0.000506,GOOD,GOOD,0
+test/good/000.png,good,brightness,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,brightness,-30%,1,0.373002,0.373970,+0.000968,0.000968,GOOD,GOOD,0
+test/good/000.png,good,brightness,-15%,2,0.373002,0.375437,+0.002435,0.002435,GOOD,GOOD,0
+test/good/000.png,good,brightness,+15%,3,0.373002,0.372034,-0.000967,0.000967,GOOD,GOOD,0
+test/good/000.png,good,brightness,+30%,4,0.373002,0.371232,-0.001770,0.001770,GOOD,GOOD,0
+test/good/000.png,good,contrast,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,contrast,-30%,1,0.373002,0.364528,-0.008474,0.008474,GOOD,GOOD,0
+test/good/000.png,good,contrast,-15%,2,0.373002,0.368730,-0.004272,0.004272,GOOD,GOOD,0
+test/good/000.png,good,contrast,+15%,3,0.373002,0.375051,+0.002050,0.002050,GOOD,GOOD,0
+test/good/000.png,good,contrast,+30%,4,0.373002,0.377216,+0.004215,0.004215,GOOD,GOOD,0
+test/good/000.png,good,gaussian_blur,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,gaussian_blur,sigma 1.0,1,0.373002,0.369832,-0.003170,0.003170,GOOD,GOOD,0
+test/good/000.png,good,gaussian_blur,sigma 2.0,2,0.373002,0.366261,-0.006741,0.006741,GOOD,GOOD,0
+test/good/000.png,good,gaussian_blur,sigma 3.0,3,0.373002,0.363320,-0.009681,0.009681,GOOD,GOOD,0
+test/good/000.png,good,gaussian_noise,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,gaussian_noise,std 2%,1,0.373002,0.371546,-0.001456,0.001456,GOOD,GOOD,0
+test/good/000.png,good,gaussian_noise,std 5%,2,0.373002,0.373667,+0.000665,0.000665,GOOD,GOOD,0
+test/good/000.png,good,gaussian_noise,std 10%,3,0.373002,0.387355,+0.014353,0.014353,GOOD,GOOD,0
+test/good/000.png,good,jpeg,0,0,0.373002,0.373002,+0.000000,0.000000,GOOD,GOOD,0
+test/good/000.png,good,jpeg,quality 90,1,0.373002,0.371564,-0.001438,0.001438,GOOD,GOOD,0
+test/good/000.png,good,jpeg,quality 70,2,0.373002,0.372430,-0.000572,0.000572,GOOD,GOOD,0
+test/good/000.png,good,jpeg,quality 50,3,0.373002,0.374541,+0.001539,0.001539,GOOD,GOOD,0
+test/good/001.png,good,rotation,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,rotation,-15 deg,1,0.374639,0.371910,-0.002729,0.002729,GOOD,GOOD,0
+test/good/001.png,good,rotation,-10 deg,2,0.374639,0.371794,-0.002846,0.002846,GOOD,GOOD,0
+test/good/001.png,good,rotation,-5 deg,3,0.374639,0.372208,-0.002432,0.002432,GOOD,GOOD,0
+test/good/001.png,good,rotation,+5 deg,4,0.374639,0.374123,-0.000516,0.000516,GOOD,GOOD,0
+test/good/001.png,good,rotation,+10 deg,5,0.374639,0.369509,-0.005130,0.005130,GOOD,GOOD,0
+test/good/001.png,good,rotation,+15 deg,6,0.374639,0.368284,-0.006355,0.006355,GOOD,GOOD,0
+test/good/001.png,good,brightness,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,brightness,-30%,1,0.374639,0.378747,+0.004108,0.004108,GOOD,GOOD,0
+test/good/001.png,good,brightness,-15%,2,0.374639,0.378863,+0.004224,0.004224,GOOD,GOOD,0
+test/good/001.png,good,brightness,+15%,3,0.374639,0.372410,-0.002229,0.002229,GOOD,GOOD,0
+test/good/001.png,good,brightness,+30%,4,0.374639,0.371316,-0.003323,0.003323,GOOD,GOOD,0
+test/good/001.png,good,contrast,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,contrast,-30%,1,0.374639,0.365141,-0.009498,0.009498,GOOD,GOOD,0
+test/good/001.png,good,contrast,-15%,2,0.374639,0.371481,-0.003158,0.003158,GOOD,GOOD,0
+test/good/001.png,good,contrast,+15%,3,0.374639,0.377221,+0.002582,0.002582,GOOD,GOOD,0
+test/good/001.png,good,contrast,+30%,4,0.374639,0.377962,+0.003323,0.003323,GOOD,GOOD,0
+test/good/001.png,good,gaussian_blur,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,gaussian_blur,sigma 1.0,1,0.374639,0.370858,-0.003781,0.003781,GOOD,GOOD,0
+test/good/001.png,good,gaussian_blur,sigma 2.0,2,0.374639,0.367633,-0.007006,0.007006,GOOD,GOOD,0
+test/good/001.png,good,gaussian_blur,sigma 3.0,3,0.374639,0.366152,-0.008487,0.008487,GOOD,GOOD,0
+test/good/001.png,good,gaussian_noise,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,gaussian_noise,std 2%,1,0.374639,0.374300,-0.000339,0.000339,GOOD,GOOD,0
+test/good/001.png,good,gaussian_noise,std 5%,2,0.374639,0.373642,-0.000997,0.000997,GOOD,GOOD,0
+test/good/001.png,good,gaussian_noise,std 10%,3,0.374639,0.390313,+0.015674,0.015674,GOOD,DEFECT,1
+test/good/001.png,good,jpeg,0,0,0.374639,0.374639,+0.000000,0.000000,GOOD,GOOD,0
+test/good/001.png,good,jpeg,quality 90,1,0.374639,0.372901,-0.001738,0.001738,GOOD,GOOD,0
+test/good/001.png,good,jpeg,quality 70,2,0.374639,0.375279,+0.000640,0.000640,GOOD,GOOD,0
+test/good/001.png,good,jpeg,quality 50,3,0.374639,0.375567,+0.000928,0.000928,GOOD,GOOD,0
+test/crack/000.png,crack,rotation,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,-15 deg,1,0.401049,0.401827,+0.000778,0.000778,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,-10 deg,2,0.401049,0.402963,+0.001914,0.001914,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,-5 deg,3,0.401049,0.400394,-0.000656,0.000656,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,+5 deg,4,0.401049,0.399139,-0.001911,0.001911,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,+10 deg,5,0.401049,0.397192,-0.003857,0.003857,DEFECT,DEFECT,0
+test/crack/000.png,crack,rotation,+15 deg,6,0.401049,0.399938,-0.001111,0.001111,DEFECT,DEFECT,0
+test/crack/000.png,crack,brightness,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,brightness,-30%,1,0.401049,0.401396,+0.000347,0.000347,DEFECT,DEFECT,0
+test/crack/000.png,crack,brightness,-15%,2,0.401049,0.404464,+0.003415,0.003415,DEFECT,DEFECT,0
+test/crack/000.png,crack,brightness,+15%,3,0.401049,0.400601,-0.000448,0.000448,DEFECT,DEFECT,0
+test/crack/000.png,crack,brightness,+30%,4,0.401049,0.398820,-0.002229,0.002229,DEFECT,DEFECT,0
+test/crack/000.png,crack,contrast,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,contrast,-30%,1,0.401049,0.393861,-0.007188,0.007188,DEFECT,DEFECT,0
+test/crack/000.png,crack,contrast,-15%,2,0.401049,0.398154,-0.002895,0.002895,DEFECT,DEFECT,0
+test/crack/000.png,crack,contrast,+15%,3,0.401049,0.402022,+0.000973,0.000973,DEFECT,DEFECT,0
+test/crack/000.png,crack,contrast,+30%,4,0.401049,0.405090,+0.004040,0.004040,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_blur,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_blur,sigma 1.0,1,0.401049,0.397962,-0.003088,0.003088,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_blur,sigma 2.0,2,0.401049,0.392372,-0.008677,0.008677,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_blur,sigma 3.0,3,0.401049,0.388641,-0.012409,0.012409,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_noise,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_noise,std 2%,1,0.401049,0.398114,-0.002936,0.002936,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_noise,std 5%,2,0.401049,0.398311,-0.002739,0.002739,DEFECT,DEFECT,0
+test/crack/000.png,crack,gaussian_noise,std 10%,3,0.401049,0.403739,+0.002689,0.002689,DEFECT,DEFECT,0
+test/crack/000.png,crack,jpeg,0,0,0.401049,0.401049,+0.000000,0.000000,DEFECT,DEFECT,0
+test/crack/000.png,crack,jpeg,quality 90,1,0.401049,0.401256,+0.000207,0.000207,DEFECT,DEFECT,0
+test/crack/000.png,crack,jpeg,quality 70,2,0.401049,0.400583,-0.000466,0.000466,DEFECT,DEFECT,0
+test/crack/000.png,crack,jpeg,quality 50,3,0.401049,0.401313,+0.000264,0.000264,DEFECT,DEFECT,0
+test/cut/000.png,cut,rotation,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,-15 deg,1,0.375074,0.371881,-0.003193,0.003193,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,-10 deg,2,0.375074,0.371733,-0.003341,0.003341,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,-5 deg,3,0.375074,0.373684,-0.001390,0.001390,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,+5 deg,4,0.375074,0.376623,+0.001549,0.001549,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,+10 deg,5,0.375074,0.372679,-0.002396,0.002396,GOOD,GOOD,0
+test/cut/000.png,cut,rotation,+15 deg,6,0.375074,0.373295,-0.001779,0.001779,GOOD,GOOD,0
+test/cut/000.png,cut,brightness,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,brightness,-30%,1,0.375074,0.377218,+0.002144,0.002144,GOOD,GOOD,0
+test/cut/000.png,cut,brightness,-15%,2,0.375074,0.380469,+0.005395,0.005395,GOOD,GOOD,0
+test/cut/000.png,cut,brightness,+15%,3,0.375074,0.374600,-0.000474,0.000474,GOOD,GOOD,0
+test/cut/000.png,cut,brightness,+30%,4,0.375074,0.376799,+0.001724,0.001724,GOOD,GOOD,0
+test/cut/000.png,cut,contrast,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,contrast,-30%,1,0.375074,0.369135,-0.005939,0.005939,GOOD,GOOD,0
+test/cut/000.png,cut,contrast,-15%,2,0.375074,0.372780,-0.002294,0.002294,GOOD,GOOD,0
+test/cut/000.png,cut,contrast,+15%,3,0.375074,0.377916,+0.002841,0.002841,GOOD,GOOD,0
+test/cut/000.png,cut,contrast,+30%,4,0.375074,0.380836,+0.005761,0.005761,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_blur,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_blur,sigma 1.0,1,0.375074,0.372736,-0.002338,0.002338,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_blur,sigma 2.0,2,0.375074,0.369382,-0.005692,0.005692,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_blur,sigma 3.0,3,0.375074,0.363410,-0.011665,0.011665,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_noise,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_noise,std 2%,1,0.375074,0.372563,-0.002512,0.002512,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_noise,std 5%,2,0.375074,0.373734,-0.001340,0.001340,GOOD,GOOD,0
+test/cut/000.png,cut,gaussian_noise,std 10%,3,0.375074,0.387116,+0.012042,0.012042,GOOD,GOOD,0
+test/cut/000.png,cut,jpeg,0,0,0.375074,0.375074,+0.000000,0.000000,GOOD,GOOD,0
+test/cut/000.png,cut,jpeg,quality 90,1,0.375074,0.374415,-0.000660,0.000660,GOOD,GOOD,0
+test/cut/000.png,cut,jpeg,quality 70,2,0.375074,0.374727,-0.000347,0.000347,GOOD,GOOD,0
+test/cut/000.png,cut,jpeg,quality 50,3,0.375074,0.376541,+0.001467,0.001467,GOOD,GOOD,0
+test/hole/000.png,hole,rotation,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,rotation,-15 deg,1,0.390658,0.395791,+0.005132,0.005132,DEFECT,DEFECT,0
+test/hole/000.png,hole,rotation,-10 deg,2,0.390658,0.393073,+0.002415,0.002415,DEFECT,DEFECT,0
+test/hole/000.png,hole,rotation,-5 deg,3,0.390658,0.392382,+0.001724,0.001724,DEFECT,DEFECT,0
+test/hole/000.png,hole,rotation,+5 deg,4,0.390658,0.386428,-0.004230,0.004230,DEFECT,GOOD,1
+test/hole/000.png,hole,rotation,+10 deg,5,0.390658,0.386595,-0.004063,0.004063,DEFECT,GOOD,1
+test/hole/000.png,hole,rotation,+15 deg,6,0.390658,0.388203,-0.002456,0.002456,DEFECT,GOOD,1
+test/hole/000.png,hole,brightness,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,brightness,-30%,1,0.390658,0.392039,+0.001381,0.001381,DEFECT,DEFECT,0
+test/hole/000.png,hole,brightness,-15%,2,0.390658,0.396000,+0.005342,0.005342,DEFECT,DEFECT,0
+test/hole/000.png,hole,brightness,+15%,3,0.390658,0.390790,+0.000131,0.000131,DEFECT,DEFECT,0
+test/hole/000.png,hole,brightness,+30%,4,0.390658,0.392002,+0.001343,0.001343,DEFECT,DEFECT,0
+test/hole/000.png,hole,contrast,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,contrast,-30%,1,0.390658,0.385427,-0.005232,0.005232,DEFECT,GOOD,1
+test/hole/000.png,hole,contrast,-15%,2,0.390658,0.389298,-0.001361,0.001361,DEFECT,DEFECT,0
+test/hole/000.png,hole,contrast,+15%,3,0.390658,0.392686,+0.002028,0.002028,DEFECT,DEFECT,0
+test/hole/000.png,hole,contrast,+30%,4,0.390658,0.395594,+0.004936,0.004936,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_blur,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_blur,sigma 1.0,1,0.390658,0.390025,-0.000634,0.000634,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_blur,sigma 2.0,2,0.390658,0.384382,-0.006276,0.006276,DEFECT,GOOD,1
+test/hole/000.png,hole,gaussian_blur,sigma 3.0,3,0.390658,0.379993,-0.010666,0.010666,DEFECT,GOOD,1
+test/hole/000.png,hole,gaussian_noise,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_noise,std 2%,1,0.390658,0.390121,-0.000537,0.000537,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_noise,std 5%,2,0.390658,0.390669,+0.000010,0.000010,DEFECT,DEFECT,0
+test/hole/000.png,hole,gaussian_noise,std 10%,3,0.390658,0.403245,+0.012586,0.012586,DEFECT,DEFECT,0
+test/hole/000.png,hole,jpeg,0,0,0.390658,0.390658,+0.000000,0.000000,DEFECT,DEFECT,0
+test/hole/000.png,hole,jpeg,quality 90,1,0.390658,0.392163,+0.001505,0.001505,DEFECT,DEFECT,0
+test/hole/000.png,hole,jpeg,quality 70,2,0.390658,0.392224,+0.001565,0.001565,DEFECT,DEFECT,0
+test/hole/000.png,hole,jpeg,quality 50,3,0.390658,0.392183,+0.001524,0.001524,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,-15 deg,1,0.404619,0.402839,-0.001779,0.001779,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,-10 deg,2,0.404619,0.405235,+0.000617,0.000617,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,-5 deg,3,0.404619,0.405224,+0.000605,0.000605,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,+5 deg,4,0.404619,0.408380,+0.003761,0.003761,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,+10 deg,5,0.404619,0.403833,-0.000786,0.000786,DEFECT,DEFECT,0
+test/print/000.png,print,rotation,+15 deg,6,0.404619,0.405308,+0.000690,0.000690,DEFECT,DEFECT,0
+test/print/000.png,print,brightness,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,brightness,-30%,1,0.404619,0.409700,+0.005081,0.005081,DEFECT,DEFECT,0
+test/print/000.png,print,brightness,-15%,2,0.404619,0.409365,+0.004746,0.004746,DEFECT,DEFECT,0
+test/print/000.png,print,brightness,+15%,3,0.404619,0.404536,-0.000083,0.000083,DEFECT,DEFECT,0
+test/print/000.png,print,brightness,+30%,4,0.404619,0.404774,+0.000155,0.000155,DEFECT,DEFECT,0
+test/print/000.png,print,contrast,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,contrast,-30%,1,0.404619,0.404039,-0.000580,0.000580,DEFECT,DEFECT,0
+test/print/000.png,print,contrast,-15%,2,0.404619,0.405030,+0.000411,0.000411,DEFECT,DEFECT,0
+test/print/000.png,print,contrast,+15%,3,0.404619,0.407488,+0.002869,0.002869,DEFECT,DEFECT,0
+test/print/000.png,print,contrast,+30%,4,0.404619,0.410212,+0.005593,0.005593,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_blur,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_blur,sigma 1.0,1,0.404619,0.402890,-0.001728,0.001728,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_blur,sigma 2.0,2,0.404619,0.397118,-0.007501,0.007501,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_blur,sigma 3.0,3,0.404619,0.398396,-0.006222,0.006222,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_noise,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_noise,std 2%,1,0.404619,0.406548,+0.001929,0.001929,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_noise,std 5%,2,0.404619,0.406814,+0.002195,0.002195,DEFECT,DEFECT,0
+test/print/000.png,print,gaussian_noise,std 10%,3,0.404619,0.411367,+0.006748,0.006748,DEFECT,DEFECT,0
+test/print/000.png,print,jpeg,0,0,0.404619,0.404619,+0.000000,0.000000,DEFECT,DEFECT,0
+test/print/000.png,print,jpeg,quality 90,1,0.404619,0.404635,+0.000017,0.000017,DEFECT,DEFECT,0
+test/print/000.png,print,jpeg,quality 70,2,0.404619,0.404945,+0.000327,0.000327,DEFECT,DEFECT,0
+test/print/000.png,print,jpeg,quality 50,3,0.404619,0.406500,+0.001881,0.001881,DEFECT,DEFECT,0
