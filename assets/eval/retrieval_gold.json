@@ -1,0 +1,122 @@
+[
+  {
+    "query": "Several shells from a dry storage lot show fine uneven splits, but there was no recent machine contact change.",
+    "relevant": ["KI-001"],
+    "note": "Drying or storage stress is the intended cause; avoid jumping to compression just because the symptom is a crack."
+  },
+  {
+    "query": "Cracks appear after a low humidity hold, following natural shell lines rather than one fixed equipment direction.",
+    "relevant": ["KI-001"],
+    "note": "Targets KI-001 because the evidence points to material stress from drying rather than a single station."
+  },
+  {
+    "query": "The last failed units have crushed-looking splits and the sizing gap log dropped below its normal window.",
+    "relevant": ["KI-002"],
+    "note": "Sizing compression and guide spacing evidence should retrieve KI-002."
+  },
+  {
+    "query": "A feed-path jam was cleared, then the next sample showed shell splits near the constrained side.",
+    "relevant": ["KI-002"],
+    "note": "Hard negative: mentions a crack, but the key clue is constrained feed compression rather than drying."
+  },
+  {
+    "query": "A shallow narrow scrape started after product moved across a rough transfer chute corner.",
+    "relevant": ["KI-003"],
+    "note": "Transfer contact is the intended cause; this should not be labeled as a natural crack."
+  },
+  {
+    "query": "Several shells have a long line after moving through the handoff bridge; operators first blamed the knife station.",
+    "relevant": ["KI-003"],
+    "note": "Hard negative: the words knife and trimming are distracting; the real cause is transfer hardware contact, so KI-003 is correct."
+  },
+  {
+    "query": "Many pieces from one sorter lane have a similar curved mark in almost the same orientation.",
+    "relevant": ["KI-004"],
+    "note": "Hard negative: the mark may look like a crack, but repeated lane geometry points to sorter guide contact."
+  },
+  {
+    "query": "Right after a lane guide insert was replaced, units from that lane show matching straight surface cuts.",
+    "relevant": ["KI-004"],
+    "note": "Targets KI-004 because consistency across a sorter lane is the main evidence."
+  },
+  {
+    "query": "Round dark openings are spread across one incoming supplier lot, and handling impact logs look normal.",
+    "relevant": ["KI-005"],
+    "note": "Hard negative: hole-like damage could be impact, but the lot-level incoming pattern points to KI-005."
+  },
+  {
+    "query": "Inspection sees recessed voids on shells before the product reaches the current line section.",
+    "relevant": ["KI-005"],
+    "note": "Targets KI-005 because the issue appears pre-existing and material or biological in origin."
+  },
+  {
+    "query": "A dark opening with broken shell edges appeared after a high drop at the hopper exit.",
+    "relevant": ["KI-006"],
+    "note": "Hard negative: it may be described as a hole, but the drop impact evidence should retrieve KI-006."
+  },
+  {
+    "query": "After bulk agitation was increased, some shells have chipped missing areas that look like holes.",
+    "relevant": ["KI-006"],
+    "note": "Targets KI-006 because collision or agitation is the causal clue."
+  },
+  {
+    "query": "The defect is a colored surface mark with no shell opening, and a belt section has visible residue.",
+    "relevant": ["KI-007"],
+    "note": "Hard negative: visual station may flag an anomaly, but the evidence is transfer residue, not physical damage."
+  },
+  {
+    "query": "QA first suspected packaging label ink, but the marked shells were found before packing after operators used colored inspection gloves.",
+    "relevant": ["KI-007"],
+    "note": "Hard negative: packaging words point toward KI-012, but the evidence is pre-pack contact with glove or tray residue, so KI-007 is correct."
+  },
+  {
+    "query": "Every few units show nearly the same print-shaped stain at the same position after passing one wheel.",
+    "relevant": ["KI-008"],
+    "note": "Hard negative: similar wording to ink transfer, but repetition from one contact surface points to KI-008."
+  },
+  {
+    "query": "The same residue pattern repeats across a short run, suggesting one dirty fixture is stamping shells.",
+    "relevant": ["KI-008"],
+    "note": "Targets KI-008 because repeated shape and position are stronger than random contamination."
+  },
+  {
+    "query": "A faint hairline crack appeared after roller pressure and belt tension were increased for a brittle lot.",
+    "relevant": ["KI-009"],
+    "note": "Hard negative: both KI-002 and KI-009 involve pressure, but roller or belt setting evidence is KI-009."
+  },
+  {
+    "query": "The report mentions drying stress, but the fine split appears exactly after a roller pressure change and has a rubbed edge.",
+    "relevant": ["KI-009"],
+    "note": "Hard negative: drying stress wording should not beat the roller pressure and rubbed-edge evidence for KI-009."
+  },
+  {
+    "query": "Short straight nicks appeared near one side immediately after the trimming blade was replaced.",
+    "relevant": ["KI-010"],
+    "note": "Targets KI-010 because the blade-change timing and nick geometry match trimming contact."
+  },
+  {
+    "query": "After clearing a jam at the trimming station, nearby shells show shallow slices with clean edges.",
+    "relevant": ["KI-010"],
+    "note": "Hard negative: it is a cut-like mark, but trimming station timing is more specific than generic transfer contact."
+  },
+  {
+    "query": "The operator called it an impact chip, but the tiny pinholes cluster by supplier date code and there are no scrape or drop clues.",
+    "relevant": ["KI-011"],
+    "note": "Hard negative: impact-chip wording points at KI-006, but tiny supplier-linked pinholes target KI-011."
+  },
+  {
+    "query": "Small pin dots appear in one harvest lot; logs show no drop, scrape, guide, roller, blade, belt, or packaging event.",
+    "relevant": ["KI-011"],
+    "note": "Targets KI-011 because the cause is shell weakness rather than handling impact."
+  },
+  {
+    "query": "It was first called belt residue, but the stain began only after open trays sat beside fresh carton labels.",
+    "relevant": ["KI-012"],
+    "note": "Hard negative: it is print-like, but packaging or label contact should retrieve KI-012 instead of belt transfer."
+  },
+  {
+    "query": "A cosmetic dark smudge appears after cartons with wet labels touched the open tray area.",
+    "relevant": ["KI-012"],
+    "note": "Targets KI-012 because the source is packaging material rather than line hardware."
+  }
+]
