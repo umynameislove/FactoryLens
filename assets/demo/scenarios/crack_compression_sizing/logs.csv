@@ -1,0 +1,6 @@
+unit_id,timestamp,station,measure_name,measure_value,spec_low,spec_high,pass_fail
+HZ-SCEN-CRACK-008,2026-06-17T09:12:00+00:00,sizing_station_01,roller_gap_mm,15.2,16.0,18.5,FAIL
+HZ-SCEN-CRACK-008,2026-06-17T09:12:00+00:00,sizing_station_01,compression_force_n,128.0,70.0,110.0,FAIL
+HZ-SCEN-CRACK-008,2026-06-17T09:12:00+00:00,vision_station_01,surface_defect_area,3.1,0.0,2.5,FAIL
+HZ-SCEN-CRACK-008,2026-06-17T09:12:00+00:00,weigh_station_01,weight_g,2.82,2.2,3.4,PASS
+HZ-SCEN-CRACK-008,2026-06-17T09:12:00+00:00,color_station_01,color_index,50.7,42.0,58.0,PASS

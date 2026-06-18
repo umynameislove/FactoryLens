@@ -1,0 +1,12 @@
+scenario,label,image_no,score,verdict,image_file,heatmap_file,source
+crack_compression_sizing,crack,008,0.421390,PASS,image.png,image_heatmap.png,data/mvtec/hazelnut/test/crack/008.png
+crack_compression_sizing,crack,009,0.416618,PASS,crack_009.png,crack_009_heatmap.png,data/mvtec/hazelnut/test/crack/009.png
+crack_compression_sizing,crack,007,0.415622,PASS,crack_007.png,crack_007_heatmap.png,data/mvtec/hazelnut/test/crack/007.png
+cut_trimming_nick,cut,015,0.392830,PASS,image.png,image_heatmap.png,data/mvtec/hazelnut/test/cut/015.png
+cut_trimming_nick,cut,001,0.390941,PASS,cut_001.png,cut_001_heatmap.png,data/mvtec/hazelnut/test/cut/001.png
+hole_impact_chip,hole,014,0.395427,PASS,image.png,image_heatmap.png,data/mvtec/hazelnut/test/hole/014.png
+hole_impact_chip,hole,010,0.398885,PASS,hole_010.png,hole_010_heatmap.png,data/mvtec/hazelnut/test/hole/010.png
+hole_impact_chip,hole,012,0.395313,PASS,hole_012.png,hole_012_heatmap.png,data/mvtec/hazelnut/test/hole/012.png
+print_belt_transfer,print,002,0.412831,PASS,image.png,image_heatmap.png,data/mvtec/hazelnut/test/print/002.png
+print_belt_transfer,print,010,0.409735,PASS,print_010.png,print_010_heatmap.png,data/mvtec/hazelnut/test/print/010.png
+print_belt_transfer,print,006,0.409551,PASS,print_006.png,print_006_heatmap.png,data/mvtec/hazelnut/test/print/006.png

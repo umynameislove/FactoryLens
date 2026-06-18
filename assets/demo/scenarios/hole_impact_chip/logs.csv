@@ -1,0 +1,6 @@
+unit_id,timestamp,station,measure_name,measure_value,spec_low,spec_high,pass_fail
+HZ-SCEN-HOLE-014,2026-06-17T09:24:00+00:00,bulk_transfer_02,impact_peak_g,6.8,0.0,4.5,FAIL
+HZ-SCEN-HOLE-014,2026-06-17T09:24:00+00:00,hopper_exit_01,drop_height_cm,42.0,0.0,30.0,FAIL
+HZ-SCEN-HOLE-014,2026-06-17T09:24:00+00:00,vision_station_01,surface_defect_area,2.95,0.0,2.5,FAIL
+HZ-SCEN-HOLE-014,2026-06-17T09:24:00+00:00,weigh_station_01,weight_g,2.06,2.20,3.40,FAIL
+HZ-SCEN-HOLE-014,2026-06-17T09:24:00+00:00,color_station_01,color_index,49.8,42.0,58.0,PASS
