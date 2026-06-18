@@ -6,10 +6,17 @@ from pathlib import Path
 
 import numpy as np
 
-from factorylens.vision.embeddings import PatchEmbeddingExtractor, feature_map_to_embeddings
+from factorylens.vision.embeddings import (
+    PatchEmbeddingExtractor,
+    feature_map_to_embeddings,
+    normalize_embeddings,
+)
 
 
 DEFAULT_MEMORY_BANK_PATH = "data/memory_bank.npz"
+CORESET_RATIO = 0.25
+CORESET_MIN_ROWS = 256
+CORESET_PROJECTION_DIM = 64
 
 
 def build_memory_bank(
@@ -29,13 +36,23 @@ def build_memory_bank(
         raise ValueError("good_image_paths must not be empty")
 
     extractor = extractor or PatchEmbeddingExtractor()
-    rng = np.random.default_rng(seed)
     all_embeddings: list[np.ndarray] = []
     for image_path in good_image_paths:
         embeddings = extractor.extract_patch_embeddings(image_path)
-        all_embeddings.append(_subsample_rows(embeddings, max_patches_per_image, rng))
+        all_embeddings.append(
+            _uniform_candidate_rows(
+                embeddings,
+                max_patches_per_image,
+            )
+        )
 
-    memory_bank = np.vstack(all_embeddings).astype(np.float32, copy=False)
+    candidates = np.vstack(all_embeddings).astype(np.float32, copy=False)
+    target_rows = _coreset_target_size(len(candidates))
+    memory_bank = greedy_coreset(
+        candidates,
+        target_rows,
+        seed=seed,
+    )
     distance_scale = estimate_distance_scale(memory_bank)
 
     if out_path:
@@ -69,6 +86,11 @@ def score_image(
     extractor = extractor or PatchEmbeddingExtractor()
     feature_map = extractor.extract_feature_map(image_path)
     embeddings = feature_map_to_embeddings(feature_map)
+    if embeddings.shape[1] != memory_bank.shape[1]:
+        raise ValueError(
+            "memory bank embedding dimension does not match the extractor; "
+            "rebuild data/memory_bank.npz"
+        )
     raw_scores = nearest_neighbor_distances(embeddings, memory_bank)
 
     _, height, width = feature_map.shape
@@ -151,13 +173,106 @@ def estimate_distance_scale(memory_bank: np.ndarray, sample_size: int = 2048) ->
     return float(max(np.percentile(nearest, 95), 1e-6))
 
 
-def _subsample_rows(
+def greedy_coreset(
+    embeddings: np.ndarray,
+    target_rows: int,
+    *,
+    seed: int = 13,
+    projection_dim: int = CORESET_PROJECTION_DIM,
+) -> np.ndarray:
+    """Select a deterministic k-center coreset with a JL-style projection."""
+
+    embeddings = np.asarray(embeddings, dtype=np.float32)
+    if embeddings.ndim != 2 or len(embeddings) == 0:
+        raise ValueError("embeddings must have shape (N, C) with N > 0")
+    if target_rows <= 0:
+        raise ValueError("target_rows must be positive")
+    if len(embeddings) <= target_rows:
+        return embeddings.copy()
+
+    projected = _project_for_coreset(
+        embeddings,
+        seed=seed,
+        projection_dim=projection_dim,
+    )
+    centroid = projected.mean(axis=0, keepdims=True)
+    first_index = int(
+        np.argmax(np.sum((projected - centroid) ** 2, axis=1))
+    )
+    selected = np.empty(target_rows, dtype=np.int64)
+    selected[0] = first_index
+    minimum_distances = _squared_distances(
+        projected,
+        projected[first_index],
+    )
+    minimum_distances[first_index] = -1.0
+
+    for index in range(1, target_rows):
+        next_index = int(np.argmax(minimum_distances))
+        selected[index] = next_index
+        distances = _squared_distances(
+            projected,
+            projected[next_index],
+        )
+        minimum_distances = np.minimum(minimum_distances, distances)
+        minimum_distances[selected[: index + 1]] = -1.0
+
+    return embeddings[selected].astype(np.float32, copy=False)
+
+
+def _uniform_candidate_rows(
     embeddings: np.ndarray,
     max_rows: int,
-    rng: np.random.Generator,
 ) -> np.ndarray:
+    if embeddings.ndim != 2 or len(embeddings) == 0:
+        raise ValueError("patch embeddings must have shape (N, C) with N > 0")
     if max_rows <= 0 or len(embeddings) <= max_rows:
         return embeddings
 
-    indexes = rng.choice(len(embeddings), size=max_rows, replace=False)
-    return embeddings[np.sort(indexes)]
+    indexes = np.linspace(
+        0,
+        len(embeddings) - 1,
+        num=max_rows,
+        dtype=np.int64,
+    )
+    return embeddings[indexes]
+
+
+def _coreset_target_size(candidate_count: int) -> int:
+    if candidate_count <= CORESET_MIN_ROWS:
+        return candidate_count
+    return min(
+        candidate_count,
+        max(
+            CORESET_MIN_ROWS,
+            int(np.ceil(candidate_count * CORESET_RATIO)),
+        ),
+    )
+
+
+def _project_for_coreset(
+    embeddings: np.ndarray,
+    *,
+    seed: int,
+    projection_dim: int,
+) -> np.ndarray:
+    if projection_dim <= 0:
+        raise ValueError("projection_dim must be positive")
+    if embeddings.shape[1] <= projection_dim:
+        return normalize_embeddings(embeddings)
+
+    rng = np.random.default_rng(seed)
+    projection = rng.normal(
+        0.0,
+        1.0 / np.sqrt(projection_dim),
+        size=(embeddings.shape[1], projection_dim),
+    ).astype(np.float32)
+    return normalize_embeddings(embeddings @ projection)
+
+
+def _squared_distances(
+    embeddings: np.ndarray,
+    reference: np.ndarray,
+) -> np.ndarray:
+    difference = embeddings - reference[None, :]
+    return np.sum(difference * difference, axis=1)
