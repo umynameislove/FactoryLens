@@ -21,6 +21,8 @@ dependencies = [
 db = ["pgvector>=0.2"]
 vision = ["torch", "torchvision", "opencv-python-headless", "numpy"]
 agent = ["langchain>=0.2", "langchain-openai>=0.1", "openai>=1.0", "faiss-cpu"]
+# A9 retrieval: local embedder (pgvector đã nằm trong extra `db`).
+rag = ["sentence-transformers>=2.2"]
 dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
 
 [build-system]

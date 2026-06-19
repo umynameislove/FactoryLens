@@ -110,3 +110,19 @@ class TestLogResult(BaseModel):
     failed_measures: list[str] = Field(default_factory=list)
     summary: str = ""
     warnings: list[str] = Field(default_factory=list)
+
+
+class KnownIssuesInput(BaseModel):
+    """Tham số gọi tool retrieve known-issues."""
+    query: str = Field(min_length=1, description="Triệu chứng/câu hỏi cần tra.")
+    top_k: int = Field(default=4, ge=1, le=20)
+    defect_type: str | None = Field(
+        default=None,
+        description="Lọc theo loại lỗi: crack/cut/hole/print. None = không lọc.",
+    )
+
+
+class KnownIssuesResult(BaseModel):
+    query: str
+    matches: list[KnownIssueMatch] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
