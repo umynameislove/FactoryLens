@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import torch.nn.functional as functional
 from PIL import Image
 from torch import nn
 from torchvision import models, transforms
@@ -53,7 +54,28 @@ class PatchEmbeddingExtractor:
         image = Image.open(Path(image_path)).convert("RGB")
         tensor = self.preprocess(image).unsqueeze(0).to(self.device)
         with torch.inference_mode():
-            features = self.model(tensor).squeeze(0).detach().cpu().numpy()
+            layer2, layer3 = self.model(tensor)
+            target_size = layer3.shape[-2:]
+            layer2 = functional.adaptive_avg_pool2d(layer2, target_size)
+            layer2 = functional.avg_pool2d(
+                layer2,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+            )
+            layer3 = functional.avg_pool2d(
+                layer3,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+            )
+            features = (
+                torch.cat((layer2, layer3), dim=1)
+                .squeeze(0)
+                .detach()
+                .cpu()
+                .numpy()
+            )
         return features.astype(np.float32, copy=False)
 
     def extract_patch_embeddings(self, image_path: str) -> np.ndarray:
@@ -84,10 +106,32 @@ def normalize_embeddings(embeddings: np.ndarray, eps: float = 1e-12) -> np.ndarr
     return embeddings / np.maximum(norms, eps)
 
 
+class _ResNet18MultiLayerFeatures(nn.Module):
+    """Return ResNet18 layer2 and layer3 feature maps for PatchCore fusion."""
+
+    def __init__(self, model: models.ResNet) -> None:
+        super().__init__()
+        self.stem = nn.Sequential(
+            model.conv1,
+            model.bn1,
+            model.relu,
+            model.maxpool,
+            model.layer1,
+        )
+        self.layer2 = model.layer2
+        self.layer3 = model.layer3
+
+    def forward(self, tensor: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        features = self.stem(tensor)
+        layer2 = self.layer2(features)
+        layer3 = self.layer3(layer2)
+        return layer2, layer3
+
+
 def _build_resnet18_features(
     pretrained: bool,
     allow_untrained_fallback: bool,
-) -> nn.Sequential:
+) -> _ResNet18MultiLayerFeatures:
     _configure_torch_cache()
     weights = models.ResNet18_Weights.DEFAULT if pretrained else None
     try:
@@ -103,15 +147,7 @@ def _build_resnet18_features(
         )
         model = models.resnet18(weights=None)
 
-    # Keep layers through layer2: detailed enough for localization, still small.
-    return nn.Sequential(
-        model.conv1,
-        model.bn1,
-        model.relu,
-        model.maxpool,
-        model.layer1,
-        model.layer2,
-    )
+    return _ResNet18MultiLayerFeatures(model)
 
 
 def _configure_torch_cache() -> None:
