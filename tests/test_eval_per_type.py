@@ -152,9 +152,9 @@ def test_real_score_regression_keeps_stronger_threshold() -> None:
         current_threshold=0.3884,
     )
 
-    assert best.threshold == pytest.approx(0.3767635)
-    assert best.accuracy == pytest.approx(0.8545454545)
-    assert best.f1 == pytest.approx(0.8873239437)
+    assert best.threshold == pytest.approx(0.313266)
+    assert best.accuracy == pytest.approx(0.9363636364)
+    assert best.f1 == pytest.approx(0.9503546099)
 
 
 def test_roc_starts_at_origin_when_score_is_one() -> None:
@@ -186,5 +186,5 @@ def test_cli_defaults_work_outside_repository(tmp_path: Path) -> None:
     )
 
     assert result.returncode == 0, result.stderr
-    assert "recommended_threshold=0.3768" in result.stdout
+    assert "recommended_threshold=0.3133" in result.stdout
     assert (tmp_path / "out/RESULTS_PER_TYPE.md").is_file()

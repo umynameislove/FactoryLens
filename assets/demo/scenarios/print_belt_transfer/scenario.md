@@ -1,6 +1,6 @@
 # Print - Belt transfer mark
 
-Status: verified with the B10 eval vision settings.
+Status: re-verified with the model B19 eval vision settings.
 
 ## Image evidence
 
@@ -9,17 +9,17 @@ Status: verified with the B10 eval vision settings.
 - MVTec label: `print`
 - Defect-type evidence: ground-truth folder `test/print`; `score_image` is only the anomaly gate.
 - Vision pipeline: `score_image`
-- Vision settings: `memory_bank_path=data/memory_bank_eval.npz`, `image_size=512`, pretrained ResNet18
-- Threshold: `0.3884`
-- Measured anomaly score: `0.412831`
-- Model verdict: `PASS` (`0.412831 >= 0.3884`)
+- Vision settings: `memory_bank_path=data/memory_bank_eval.npz`, `image_size=512`, pretrained ResNet18 layer2+layer3 fusion
+- Threshold: `0.3133`
+- Measured anomaly score: `0.325660`
+- Model verdict: `PASS` (`0.325660 >= 0.3133`)
 - Heatmap: `image_heatmap.png`
 
 | Demo file | MVTec source | Image number | Score | Verdict | Heatmap |
 |---|---|---:|---:|---|---|
-| `image.png` | `data/mvtec/hazelnut/test/print/002.png` | 002 | 0.412831 | PASS | `image_heatmap.png` |
-| `print_010.png` | `data/mvtec/hazelnut/test/print/010.png` | 010 | 0.409735 | PASS | `print_010_heatmap.png` |
-| `print_006.png` | `data/mvtec/hazelnut/test/print/006.png` | 006 | 0.409551 | PASS | `print_006_heatmap.png` |
+| `image.png` | `data/mvtec/hazelnut/test/print/002.png` | 002 | 0.325660 | PASS | `image_heatmap.png` |
+| `print_010.png` | `data/mvtec/hazelnut/test/print/010.png` | 010 | 0.329046 | PASS | `print_010_heatmap.png` |
+| `print_006.png` | `data/mvtec/hazelnut/test/print/006.png` | 006 | 0.317515 | PASS | `print_006_heatmap.png` |
 
 ## Known issue
 
@@ -34,4 +34,5 @@ Status: verified with the B10 eval vision settings.
 
 ## Final B15 note
 
-The score and heatmap above were generated from this exact committed demo image.
+The model B19 score was re-measured from the listed local MVTec source image.
+Scenario images and heatmaps remain uncommitted in this text-only bundle.
