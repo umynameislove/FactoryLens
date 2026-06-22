@@ -1,6 +1,6 @@
 # Hole - Impact chip
 
-Status: verified with the B10 eval vision settings.
+Status: re-verified with the model B19 eval vision settings.
 
 ## Image evidence
 
@@ -9,17 +9,17 @@ Status: verified with the B10 eval vision settings.
 - MVTec label: `hole`
 - Defect-type evidence: ground-truth folder `test/hole`; `score_image` is only the anomaly gate.
 - Vision pipeline: `score_image`
-- Vision settings: `memory_bank_path=data/memory_bank_eval.npz`, `image_size=512`, pretrained ResNet18
-- Threshold: `0.3884`
-- Measured anomaly score: `0.395427`
-- Model verdict: `PASS` (`0.395427 >= 0.3884`)
+- Vision settings: `memory_bank_path=data/memory_bank_eval.npz`, `image_size=512`, pretrained ResNet18 layer2+layer3 fusion
+- Threshold: `0.3133`
+- Measured anomaly score: `0.328586`
+- Model verdict: `PASS` (`0.328586 >= 0.3133`)
 - Heatmap: `image_heatmap.png`
 
 | Demo file | MVTec source | Image number | Score | Verdict | Heatmap |
 |---|---|---:|---:|---|---|
-| `image.png` | `data/mvtec/hazelnut/test/hole/014.png` | 014 | 0.395427 | PASS | `image_heatmap.png` |
-| `hole_010.png` | `data/mvtec/hazelnut/test/hole/010.png` | 010 | 0.398885 | PASS | `hole_010_heatmap.png` |
-| `hole_012.png` | `data/mvtec/hazelnut/test/hole/012.png` | 012 | 0.395313 | PASS | `hole_012_heatmap.png` |
+| `image.png` | `data/mvtec/hazelnut/test/hole/014.png` | 014 | 0.328586 | PASS | `image_heatmap.png` |
+| `hole_010.png` | `data/mvtec/hazelnut/test/hole/010.png` | 010 | 0.334122 | PASS | `hole_010_heatmap.png` |
+| `hole_012.png` | `data/mvtec/hazelnut/test/hole/012.png` | 012 | 0.320183 | PASS | `hole_012_heatmap.png` |
 
 ## Known issue
 
@@ -34,4 +34,5 @@ Status: verified with the B10 eval vision settings.
 
 ## Final B15 note
 
-The score and heatmap above were generated from this exact committed demo image.
+The model B19 score was re-measured from the listed local MVTec source image.
+Scenario images and heatmaps remain uncommitted in this text-only bundle.
