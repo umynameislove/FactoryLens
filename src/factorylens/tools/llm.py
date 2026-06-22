@@ -15,6 +15,7 @@ class LLMClient(Protocol):
         *,
         model: str,
         temperature: float,
+        json_mode: bool = True,
     ) -> str: ...
 
 
@@ -31,16 +32,20 @@ class OpenAIClient:
         *,
         model: str,
         temperature: float,
+        json_mode: bool = True,
     ) -> str:
-        response = self._client.chat.completions.create(
-            model=model,
-            temperature=temperature,
-            response_format={"type": "json_object"},
-            messages=[
+        request = {
+            "model": model,
+            "temperature": temperature,
+            "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-        )
+        }
+        if json_mode:
+            request["response_format"] = {"type": "json_object"}
+
+        response = self._client.chat.completions.create(**request)
         return response.choices[0].message.content or ""
 
 
