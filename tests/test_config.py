@@ -28,7 +28,7 @@ def test_settings_defaults_are_local_and_non_secret() -> None:
     assert settings.max_logs_mb == 5
     assert settings.max_log_rows == 100_000
     assert settings.vision_memory_bank_path == "data/memory_bank.npz"
-    assert settings.anomaly_threshold == 0.3884
+    assert settings.anomaly_threshold == 0.3133
     assert settings.heatmap_dir == "heatmaps"
 
 
