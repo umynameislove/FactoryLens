@@ -5,13 +5,13 @@ Runnable now: `/health` works; `/analyze` returns a contract-valid stub
 """
 
 from __future__ import annotations
-
+ 
 import logging
-import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from typing import Annotated
 
-from fastapi import Depends, FastAPI, Form, UploadFile
+from fastapi import Depends, FastAPI, Form, UploadFile, File, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -23,6 +23,15 @@ from factorylens import __version__
 from factorylens.api.uploads import router as uploads_router
 from factorylens.db import get_db, init_db
 from factorylens.schemas import AnalysisResponse
+from factorylens.config import Settings, get_settings
+from factorylens.storage import (
+    ImageStorageError,
+    UploadValidationError,
+    save_upload_image,
+)
+from factorylens.ingest.logs import LogValidationError, parse_and_ingest_logs
+from factorylens.agents.investigation import run_analysis
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,22 +78,27 @@ def readiness(db: Session = Depends(get_db)) -> JSONResponse:
 
 @app.post("/analyze", response_model=AnalysisResponse)
 async def analyze(
-    image: UploadFile | None = None,
-    test_logs: UploadFile | None = None,
-    question: str = Form(default="Analyze defects + root cause"),
-    category: str | None = Form(default=None),
+    image: Annotated[UploadFile, File()],
+    db: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    test_logs: Annotated[UploadFile | None, File()] = None,
+    question: Annotated[str, Form()] = "Analyze defects + root cause",
+    category: Annotated[str | None, Form()] = None,
 ) -> AnalysisResponse:
-    """Phase 1 stub: validates inputs and returns the contract shape.
+    """Run the full pipeline: store image, ingest logs, analyze, return report."""
+    try:
+        _, stored_path, _, _ = save_upload_image(image, settings)
+    except UploadValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from None
+    except ImageStorageError:
+        raise HTTPException(status_code=500, detail="Image could not be stored.") from None
 
-    Tools (analyze_image_defect, query_test_logs, retrieve_known_issues,
-    generate_root_cause_hypothesis, generate_engineering_report) are wired in
-    Phase 2-3. For now we echo a contract-valid skeleton + a warning.
-    """
-    warnings = ["stub response: AI pipeline not implemented yet (Phase 2-3)"]
-    if image is None:
-        warnings.append("no image uploaded")
-    return AnalysisResponse(
-        request_id=str(uuid.uuid4()),
-        category=category,
-        warnings=warnings,
+    if test_logs is not None:
+        try:
+            parse_and_ingest_logs(test_logs, db, settings)
+        except LogValidationError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+
+    return await run_in_threadpool(
+        run_analysis, stored_path, db, category=category
     )
