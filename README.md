@@ -1,137 +1,201 @@
 # FactoryLens AI
 
-AI copilot for **industrial visual defect analysis, root-cause investigation,
-and engineering report generation**. Upload a product image (+ optional test
-logs and known-issue docs) and a question; get an anomaly assessment, related
-known issues, a root-cause hypothesis, next actions, and a structured
-engineering report.
+> An AI copilot for **industrial visual defect analysis** — turning a product image,
+> test logs, and a question into an anomaly assessment, a retrieved set of known
+> issues, an evidence-grounded root-cause hypothesis, and a structured engineering report.
 
-> **Status — Phase 1 backend foundation complete.** FastAPI, a locked Pydantic
-> contract, the SQLAlchemy + PostgreSQL/pgvector data layer, and a local Docker
-> stack are in place, including secure uploads and idempotent demo-data seeding.
-> The bounded tools and agent integration are the next milestone.
+FactoryLens combines a vision anomaly detector, a SQL log analyzer, semantic retrieval
+over a known-issue knowledge base, and two LLM reasoning steps into a single bounded
+agent. Every step degrades gracefully: the full pipeline runs end-to-end **with or
+without** an LLM API key.
+
+---
+
+## What it does
+
+Given an uploaded image (and optionally a CSV of manufacturing test logs), FactoryLens:
+
+1. **Detects anomalies** in the image (PatchCore-style scoring on ResNet-18 features) and
+   produces an anomaly score, defect label, and a heatmap overlay.
+2. **Analyzes test logs** with allow-listed, read-only SQL and surfaces the failed measures.
+3. **Retrieves known issues** semantically from a pgvector store (RAG) ranked by similarity.
+4. **Hypothesizes a root cause** with an LLM, grounded strictly in the evidence above.
+5. **Generates an engineering report** in Markdown (exportable to PDF).
+
+A LangChain agent orchestrates these five tools; a deterministic fallback produces the
+same structured response when no API key is configured.
+
+---
+
+## Features
+
+- **End-to-end `POST /analyze`** — image + logs + question → full structured analysis.
+- **Bounded agent** built on LangChain `create_agent`, with a fixed, reproducible
+  finalization step so the output schema is never left to the model.
+- **No-API-key fallback** — heuristic root cause + retrieval-only report, clearly flagged.
+- **Security-first** — read-only allow-listed SQL with bound parameters, path-traversal-safe
+  storage, bounded uploads, no secrets in the repo, and fail-safe error handling throughout.
+- **Streamlit dashboard** — upload, run, and inspect results (image, heatmap, logs,
+  known issues, hypothesis, report) interactively.
+- **Evaluation harness** — retrieval quality, per-defect-type vision metrics, and a
+  perturbation robustness study.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Client["API consumer / Streamlit UI"]:::external
+    API["FastAPI · /analyze"]:::core
+    Agent["LangChain agent<br/>(5 bounded tools + fallback)"]:::core
+
+    Image["analyze_image_defect<br/>anomaly score + heatmap"]:::tool
+    Logs["query_test_logs<br/>read-only allow-listed SQL"]:::tool
+    Retrieve["retrieve_known_issues<br/>pgvector cosine top-k"]:::tool
+    Root["generate_root_cause_hypothesis<br/>LLM, evidence-grounded"]:::tool
+    Report["generate_engineering_report<br/>Markdown / PDF"]:::tool
+
+    DB["PostgreSQL 16 + pgvector"]:::infra
+    Vision["ResNet-18 memory bank<br/>(PatchCore-style)"]:::infra
+
+    Client --> API --> Agent
+    Agent --> Image --> Vision
+    Agent --> Logs --> DB
+    Agent --> Retrieve --> DB
+    Agent --> Root --> Report
+
+    classDef core fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#1b1b1b;
+    classDef tool fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b1b1b;
+    classDef infra fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#1b1b1b;
+    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#1b1b1b;
+```
+
+See [`docs/architecture.md`](docs/architecture.md) for component maps, request flows,
+and the data contract.
+
+---
 
 ## Tech stack
 
-- **Backend:** FastAPI · SQLAlchemy 2.0 · PostgreSQL + pgvector
-- **Runtime:** Docker · docker-compose
-- **AI (in progress):** LangChain · OpenAI
-- **Dataset:** MVTec AD — `hazelnut` subset
+| Layer | Technology |
+|---|---|
+| API | FastAPI · Pydantic v2 |
+| Data | SQLAlchemy 2.0 · PostgreSQL 16 · pgvector |
+| Agent / LLM | LangChain (`create_agent`) · OpenAI |
+| Vision | PyTorch · ResNet-18 (multi-layer features + coreset memory bank) |
+| Retrieval | sentence-transformers (MiniLM, 384-d) · pgvector cosine |
+| UI / Reports | Streamlit · Markdown → PDF (fpdf2) |
+| Runtime | Docker · docker-compose |
+| Dataset | MVTec AD — `hazelnut` subset |
+
+---
 
 ## Quickstart
-
-The liveness endpoint does not require a database:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-uvicorn factorylens.main:app --reload   # http://127.0.0.1:8000/health
-pytest
+
+# Start PostgreSQL + pgvector
+cp .env.example .env          # set a local password in POSTGRES_PASSWORD and DATABASE_URL
+docker compose up -d db
+
+# Run the API
+uvicorn factorylens.main:app --reload     # http://127.0.0.1:8000
 ```
 
-`POST /analyze` (multipart: `image`, `test_logs`, `question`, `category`)
-currently returns a contract-valid stub.
-
-## Local database with Docker
-
-Copy the placeholder environment file and replace its password with a real
-local-only value in both `POSTGRES_PASSWORD` and `DATABASE_URL`. `.env` is
-gitignored and must never be committed.
+Health checks:
 
 ```bash
-cp .env.example .env
-docker compose build
-docker compose up -d
-docker compose exec app python -m factorylens.db.init_db
+curl http://127.0.0.1:8000/health    # liveness (no DB)
+curl http://127.0.0.1:8000/readyz    # readiness (SELECT 1; 503 if DB down)
 ```
 
-Check the two health signals separately:
+Optional extras: `.[agent]` (LLM agent), `.[vision]` (anomaly detector),
+`.[rag]` (local embedder), `.[reporting]` (PDF), `.[ui]` (Streamlit).
+
+---
+
+## Usage
+
+### Analyze a unit
 
 ```bash
-curl http://127.0.0.1:8000/health
-curl http://127.0.0.1:8000/readyz
+curl -s -F "image=@unit.png" \
+        -F "test_logs=@logs.csv" \
+        -F "category=hazelnut" \
+        http://127.0.0.1:8000/analyze
 ```
 
-- `/health` is pure application liveness and never queries the database.
-- `/readyz` executes `SELECT 1` and returns HTTP 503 when the DB is unavailable.
+Returns an `AnalysisResponse`: anomaly score, defect label, heatmap path, related known
+issues, root-cause hypothesis, next actions, the report markdown, and warnings.
 
-Stop the stack without deleting the named PostgreSQL volume:
+### Dashboard
 
 ```bash
-docker compose down
+pip install -e ".[ui]"
+streamlit run app_streamlit.py
 ```
 
-The current schema is created idempotently with `factorylens.db.init_db`.
-Alembic migrations are intentionally deferred until the schema starts evolving.
+### Configuration
 
-## Seed demo data
+Set via `.env` (never committed):
 
-Load the committed hazelnut sample logs after the local stack is running:
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `OPENAI_API_KEY` | Enables the LLM path (omit to use the deterministic fallback) |
+| `OPENAI_MODEL` | LLM model id (default `gpt-5.4-mini`) |
+| `ANOMALY_THRESHOLD` | Anomaly decision threshold (default `0.3133`) |
 
-```bash
-docker compose up -d
-docker compose exec app python -m factorylens.db.init_db
-docker compose exec app python -m factorylens.seed
-# Replace existing test-log rows:
-docker compose exec app python -m factorylens.seed --reset
-```
+---
 
-Seeding is idempotent without `--reset`. The MVTec image manifest belongs to
-the vision pipeline and is not loaded into the database by this command.
+## Evaluation
 
-## Architecture
+Measured on the MVTec AD `hazelnut` subset and a hand-labeled retrieval gold set.
 
-The solid nodes below are implemented today. Dotted nodes are either the
-contract-valid `/analyze` stub or planned integrations; they are not presented
-as running features.
+**Known-issue retrieval** (semantic pgvector vs. a TF-IDF baseline, same 24-query gold set):
 
-```mermaid
-flowchart LR
-    Client["API consumer"]:::external
-    Uploads["Image and CSV uploads"]:::implemented
-    Analyze["/analyze stub"]:::stub
-    Services["Storage, ingest, seed, config"]:::implemented
-    DB["PostgreSQL + test_logs<br/>pgvector extension enabled"]:::implemented
-    Files["Local uploads"]:::implemented
-    Vision["Vision baseline<br/>standalone"]:::stub
-    Agent["Bounded agent and five tools"]:::planned
-    Vectors["Known-issue vectors"]:::planned
-    UI["Streamlit dashboard"]:::planned
+| Metric | TF-IDF baseline | FactoryLens (pgvector) |
+|---|---:|---:|
+| recall@3 | 0.875 | **1.000** |
+| MRR | 0.880 | 0.840 |
 
-    Client --> Uploads
-    Client --> Analyze
-    Uploads --> Services
-    Services --> DB
-    Services --> Files
-    Analyze -. "planned integration" .-> Agent
-    Agent -. "planned wrapper" .-> Vision
-    Agent -. "planned retrieval" .-> Vectors
-    UI -. "planned API client" .-> Analyze
+Semantic retrieval always places the correct known issue in the top-k passed to the LLM.
 
-    classDef implemented fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b1b1b;
-    classDef stub fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,stroke-dasharray:2 3,color:#1b1b1b;
-    classDef planned fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,stroke-dasharray:7 5,color:#1b1b1b;
-    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#1b1b1b;
-```
+**Per-defect-type anomaly detection** (image-level AUROC):
 
-See [Architecture](docs/architecture.md) for the complete component map,
-implemented request flows, target `/analyze` sequence, and evidence table.
+| crack | cut | hole | print |
+|---:|---:|---:|---:|
+| 0.981 | 0.918 | 0.965 | 0.991 |
 
-## Layout
+Reproduce: `python scripts/eval_retrieval.py`, `python scripts/eval_per_type.py`.
+
+---
+
+## Project layout
 
 ```
 working/
-  src/factorylens/   # API, config, schemas, and SQLAlchemy database layer
-  tests/             # smoke + contract tests
-  docs/MVP_SPEC.md   # product + tool contract (source of truth)
-  Dockerfile
-  docker-compose.yml
+  src/factorylens/
+    api/            # upload endpoints + storage
+    agents/         # LangChain orchestrator + deterministic fallback
+    tools/          # the five bounded tools + embedder/LLM clients
+    vision/         # anomaly detector, heatmaps, evaluation
+    db/             # SQLAlchemy models, session, init
+    reporting/      # Markdown -> PDF
+    schemas.py      # locked Pydantic contract
+    config.py + main.py
+  tests/            # contract, unit, and end-to-end tests
+  scripts/          # evaluation and data utilities
+  app_streamlit.py  # dashboard
+  docs/architecture.md
 ```
 
-Internal planning/tracking lives **outside this repo** in `../_tracking/`
-(never committed).
+---
 
-## Contributing rule
+## License
 
-No direct commits to `main`. Flow: **issue → branch → small commits → PR
-(goal / changes / tests / risks + label) → review → squash merge.**
+For research and educational use. The MVTec AD dataset is subject to its own license
+(CC BY-NC-SA 4.0) and is not redistributed in this repository.
