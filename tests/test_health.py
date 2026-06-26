@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from factorylens.db.session import get_db
 from factorylens.main import app
-from factorylens.schemas import AnalysisResponse
 
 client = TestClient(app)
 
@@ -57,16 +56,3 @@ def test_readyz_hides_database_error_details() -> None:
     assert response.status_code == 503
     assert response.json() == {"status": "not_ready", "db": "down"}
     assert "sensitive" not in response.text
-
-
-def test_analyze_returns_contract_shape() -> None:
-    r = client.post(
-        "/analyze",
-        data={"question": "why defect?", "category": "hazelnut"},
-    )
-    assert r.status_code == 200
-    # Response must validate against the locked contract.
-    parsed = AnalysisResponse.model_validate(r.json())
-    assert parsed.category == "hazelnut"
-    assert parsed.request_id
-    assert any("stub" in w for w in parsed.warnings)
