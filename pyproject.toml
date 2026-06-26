@@ -25,6 +25,7 @@ agent = ["langchain>=1.0",
     "langgraph>=0.2",
     "openai>=1.0",
     "faiss-cpu"]
+reporting = ["markdown>=3.5", "fpdf2>=2.7"]
 # A9 retrieval: local embedder (pgvector đã nằm trong extra `db`).
 rag = ["sentence-transformers>=2.2"]
 dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
