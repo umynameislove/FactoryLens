@@ -19,6 +19,7 @@ dependencies = [
 # so the tech-stack table in _tracking/TRACKING.md stays honest.
 [project.optional-dependencies]
 db = ["pgvector>=0.2"]
+ui = ["streamlit>=1.3", "pandas>=2.0"]
 vision = ["torch", "torchvision", "opencv-python-headless", "numpy"]
 agent = ["langchain>=1.0",
     "langchain-openai>=0.3",
