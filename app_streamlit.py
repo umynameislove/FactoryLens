@@ -276,7 +276,7 @@ def inject_styles() -> None:
         }
 
         [data-testid="stSidebar"] label,
-        [data-testid="stWidgetLabel"] p {
+        [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
             color: var(--fl-white) !important;
             font-size: 0.72rem !important;
             font-weight: 700 !important;
@@ -595,6 +595,8 @@ def inject_cockpit_styles() -> None:
             --fl-hairline: #29292d;
             --fl-hairline-strong: #46464c;
             --fl-display: "D-DIN-Bold", "Arial Narrow", Arial, Verdana, sans-serif;
+            --fl-sidebar-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                Helvetica, Arial, sans-serif;
         }
 
         .stApp [data-testid="stMainBlockContainer"],
@@ -606,6 +608,18 @@ def inject_cockpit_styles() -> None:
         [data-testid="stSidebar"] {
             background: #050505 !important;
             border-right-color: var(--fl-hairline-strong);
+            font-family: var(--fl-sidebar-font) !important;
+        }
+
+        [data-testid="stSidebar"] p,
+        [data-testid="stSidebar"] label,
+        [data-testid="stSidebar"] input,
+        [data-testid="stSidebar"] textarea,
+        [data-testid="stSidebar"] button,
+        [data-testid="stSidebar"] [data-baseweb="select"] span,
+        [data-testid="stSidebar"] .fl-sidebar-brand strong,
+        [data-testid="stSidebar"] .fl-control-title {
+            font-family: var(--fl-sidebar-font) !important;
         }
 
         [data-testid="stSidebar"] > div:first-child {
@@ -618,8 +632,10 @@ def inject_cockpit_styles() -> None:
 
         [data-testid="stSidebar"] label,
         [data-testid="stWidgetLabel"] p {
-            font-size: 0.68rem !important;
-            letter-spacing: 0.105rem !important;
+            font-size: 0.76rem !important;
+            letter-spacing: 0.025rem !important;
+            line-height: 1.4 !important;
+            text-transform: none;
         }
 
         .fl-topbar {
@@ -782,10 +798,9 @@ def inject_cockpit_styles() -> None:
         }
 
         .fl-sidebar-brand strong {
-            font-family: var(--fl-display);
-            font-size: 1.3rem;
-            letter-spacing: 0.105rem;
-            line-height: 1.05;
+            font-size: 1.2rem;
+            letter-spacing: 0.035rem;
+            line-height: 1.15;
             margin-top: 0.45rem;
         }
 
@@ -809,23 +824,21 @@ def inject_cockpit_styles() -> None:
         .fl-control-index {
             color: var(--fl-dim);
             font-size: 0.62rem;
-            letter-spacing: 0.1rem;
+            letter-spacing: 0.055rem;
             margin-bottom: 0.15rem;
             text-transform: uppercase;
         }
 
         .fl-control-title {
             color: var(--fl-white);
-            font-family: var(--fl-display);
-            font-size: 0.77rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            letter-spacing: 0.09rem;
-            text-transform: uppercase;
+            letter-spacing: 0.025rem;
         }
 
         .fl-control-copy {
             color: var(--fl-dim);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             line-height: 1.45;
             margin-top: 0.25rem;
         }
@@ -1158,7 +1171,7 @@ def render_app_header() -> None:
     st.markdown(
         """
         <div class="fl-topbar">
-            <div class="fl-wordmark">FACTORYLENS <span>FL / 01</span></div>
+            <div class="fl-wordmark">FACTORYLENS </div>
             <div class="fl-topbar-status">
                 <span class="fl-status-dot"></span>
                 VISUAL AUDIT NODE ONLINE
@@ -1173,13 +1186,6 @@ def render_app_header() -> None:
                     convert anomaly signals into an engineering-ready assessment.
                 </p>
             </div>
-            <aside class="fl-mission-card">
-                <div class="fl-mission-card-title">MISSION STATUS</div>
-                <div class="fl-mission-row"><span>NODE</span><strong>FL-VISION-01</strong></div>
-                <div class="fl-mission-row"><span>PIPELINE</span><strong>ARMED</strong></div>
-                <div class="fl-mission-row"><span>MODE</span><strong>ROOT CAUSE</strong></div>
-                <div class="fl-mission-row"><span>OUTPUT</span><strong>AUDIT RECORD</strong></div>
-            </aside>
         </section>
         <div class="fl-mission-strip">
             <div class="fl-strip-cell">INPUT <strong>IMAGE + LOGS</strong></div>
@@ -1583,10 +1589,10 @@ def render_sidebar(
     st.sidebar.markdown(
         """
         <div class="fl-sidebar-brand">
-            <div class="fl-sidebar-kicker">MISSION CONTROL</div>
-            <strong>INVESTIGATION<br>CONTROL DECK</strong>
+            <div class="fl-sidebar-kicker">FACTORYLENS</div>
+            <strong>VISUAL AUDIT</strong>
             <div class="fl-sidebar-status">
-                <span>FL / VISUAL NODE</span>
+                <span>SYSTEM</span>
                 <span>ONLINE</span>
             </div>
         </div>
@@ -1595,52 +1601,47 @@ def render_sidebar(
     )
 
     render_sidebar_group(
-        "01 / MISSION PROFILE",
-        "DEMO SCENARIO",
-        "Load a prepared evidence package or begin with a clean investigation.",
+        "01",
+        "Demo scenario",
+        "Choose demo data or start empty.",
     )
     scenario_names = [EMPTY_SCENARIO, *scenarios.keys()]
     selected_scenario = st.sidebar.selectbox(
-        "Demo scenario",
+        "Scenario",
         scenario_names,
         format_func=_format_scenario_name,
+        label_visibility="collapsed",
     )
 
     render_sidebar_group(
-        "02 / EVIDENCE CHANNELS",
-        "INPUT PAYLOAD",
-        "Attach the visual frame and optional production log stream.",
+        "02",
+        "Input files",
+        "Add an image and optional CSV.",
     )
     uploaded_image = st.sidebar.file_uploader(
-        "Product image",
+        "Image",
         type=["png", "jpg", "jpeg"],
     )
-    uploaded_csv = st.sidebar.file_uploader("CSV logs", type=["csv"])
+    uploaded_csv = st.sidebar.file_uploader("Logs (CSV)", type=["csv"])
 
     render_sidebar_group(
-        "03 / ANALYSIS DIRECTIVE",
-        "QUERY PARAMETERS",
-        "Define the investigation objective and inspection category.",
+        "03",
+        "Analysis",
+        "Set the question and category.",
     )
     question = st.sidebar.text_area(
-        "Investigation question",
+        "Question",
         value="Analyze defects + root cause",
         height=92,
     )
     category = st.sidebar.selectbox("Category", ["hazelnut"], index=0)
 
-    render_sidebar_group(
-        "04 / EXECUTION",
-        "LAUNCH SEQUENCE",
-        "Run the visual audit and assemble the engineering record.",
-    )
     analyze_clicked = st.sidebar.button("RUN ANALYSIS", use_container_width=True)
 
     st.sidebar.markdown(
         """
         <div class="fl-sidebar-note">
-            CURRENT ANALYSIS LANE USES THE PRODUCT IMAGE AND CATEGORY. THE CSV AND
-            INVESTIGATION QUESTION REMAIN VISIBLE AS REVIEW CONTEXT.
+            ANALYSIS USES THE IMAGE AND CATEGORY. CSV AND QUESTION ARE CONTEXT ONLY.
         </div>
         """,
         unsafe_allow_html=True,
