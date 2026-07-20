@@ -279,7 +279,7 @@ def write_metadata(
         "",
         f"- Ngày chạy: {datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds')}",
         f"- Commit hash của repo lúc dựng bank: {build['git_commit']}",
-        f"- Máy / OS / Python version: {build['os']} / {build['python_version']}",
+        f"- Máy / OS / Python version: {build['machine']} / {build['os']} / {build['python_version']}",
         "",
         "## Dữ liệu train",
         "",

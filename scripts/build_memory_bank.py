@@ -239,6 +239,7 @@ def _write_build_metadata(
         "seed": seed,
         "train_dir": train_dir.resolve().as_posix(),
         "python_version": platform.python_version(),
+        "machine": platform.node(),
         "os": platform.platform(),
         "git_commit": _git_commit(),
     }
