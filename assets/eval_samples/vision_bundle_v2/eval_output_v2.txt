@@ -1,0 +1,21 @@
+FactoryLens full threshold evaluation
+memory_bank=/Users/apple/study/factory lens/vision_bundle_v2/memory_bank.npz
+memory_bank_sha256=66aeba456f2dc90929bf0da507055501530807bd09003c455ab13685f1450735
+memory_bank_shape=(1024, 384)
+distance_scale=0.51876783
+train_good_images=391; md5_train_test_overlap=0
+samples=110 (good=40, defect=70)
+
+Score distribution by label:
+  good: n=40 min=0.29522151 max=0.31178426 mean=0.30619332
+  crack: n=18 min=0.31055553 max=0.33707439 mean=0.32205517
+  cut: n=17 min=0.30458249 max=0.31813384 mean=0.31262760
+  hole: n=18 min=0.30686760 max=0.33300782 mean=0.31758804
+  print: n=17 min=0.31184425 max=0.33593751 mean=0.32046466
+
+AUROC=0.96178571
+score_range=0.29522151..0.33707439 width=0.04185288
+best_f1: threshold=0.31051757 FP=4/40 FN=6/70 precision=0.94117647 recall=0.91428571 f1=0.92753623 youden_j=0.81428571
+best_youden: threshold=0.31051757 FP=4/40 FN=6/70 precision=0.94117647 recall=0.91428571 f1=0.92753623 youden_j=0.81428571
+selected_youden: threshold=0.31051757 FP=4/40 FN=6/70 precision=0.94117647 recall=0.91428571 f1=0.92753623 youden_j=0.81428571
+acceptance=PASS
