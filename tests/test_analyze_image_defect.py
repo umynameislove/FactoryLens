@@ -126,8 +126,10 @@ def test_default_adapters_use_configured_bank_and_pixel_image_shape(
         path: str,
         *,
         memory_bank_path: str,
+        image_size: int | None = None,
     ) -> tuple[float, object]:
         calls["scorer"] = (path, memory_bank_path)
+        calls["image_size_arg"] = image_size
         return 0.8, score_map
 
     def fake_make_heatmap(

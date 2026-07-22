@@ -24,7 +24,8 @@ class Settings(BaseSettings):
         default="data/memory_bank.npz",
         min_length=1,
     )
-    anomaly_threshold: float = Field(default=0.3133, ge=0.0, le=1.0)
+    anomaly_threshold: float = Field(default=0.31051757, ge=0.0, le=1.0)
+    vision_image_size: int = Field(default=512, gt=0)
     heatmap_dir: str = Field(default="heatmaps", min_length=1)
     openai_api_key: str | None = None
     openai_model: str = "gpt-5.4-mini"

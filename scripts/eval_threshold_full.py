@@ -99,6 +99,9 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--limit", type=int, default=None,
                     help="only N images per class (quick smoke test)")
+    ap.add_argument("--image-size", type=int, default=None,
+                    help="override extractor input resize (must match how the "
+                         "memory bank was built; v2 bundle used 512)")
     args = ap.parse_args()
 
     if not args.memory_bank.is_file():
@@ -111,7 +114,12 @@ def main() -> None:
 
     bank, dist_scale = load_memory_bank(str(args.memory_bank))
     print(f"  memory_bank shape={bank.shape}  distance_scale={dist_scale}")
-    extractor = PatchEmbeddingExtractor()
+    if args.image_size:
+        extractor = PatchEmbeddingExtractor(image_size=args.image_size)
+        print(f"  extractor image_size={args.image_size}")
+    else:
+        extractor = PatchEmbeddingExtractor()
+        print(f"  extractor image_size={extractor.image_size} (repo default)")
 
     rows = []
     for i, (path, label, defect) in enumerate(items, 1):

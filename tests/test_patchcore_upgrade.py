@@ -87,6 +87,7 @@ def test_public_vision_signatures_remain_compatible() -> None:
         "extractor",
         "distance_scale",
         "anomaly_percentile",
+        "image_size",
     ]
     assert list(inspect.signature(save_memory_bank).parameters) == [
         "path",
