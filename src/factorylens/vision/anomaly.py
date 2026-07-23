@@ -69,6 +69,7 @@ def score_image(
     extractor: PatchEmbeddingExtractor | None = None,
     distance_scale: float | None = None,
     anomaly_percentile: float = 95.0,
+    image_size: int | None = None,
 ) -> tuple[float, np.ndarray]:
     """Score one image against a memory bank.
 
@@ -84,7 +85,12 @@ def score_image(
     if memory_bank.size == 0:
         raise ValueError("memory_bank must not be empty")
 
-    extractor = extractor or PatchEmbeddingExtractor()
+    if extractor is None:
+        extractor = (
+            PatchEmbeddingExtractor(image_size=image_size)
+            if image_size is not None
+            else PatchEmbeddingExtractor()
+        )
     feature_map = extractor.extract_feature_map(image_path)
     embeddings = feature_map_to_embeddings(feature_map)
     if embeddings.shape[1] != memory_bank.shape[1]:

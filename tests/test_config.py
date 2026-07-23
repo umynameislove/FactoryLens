@@ -29,12 +29,13 @@ def test_settings_defaults_are_local_and_non_secret() -> None:
     assert settings.max_log_rows == 100_000
     assert settings.vision_memory_bank_path == "data/memory_bank.npz"
     assert settings.anomaly_threshold == 0.31051757
+    assert settings.vision_image_size == 512
     assert settings.heatmap_dir == "heatmaps"
 
 
 @pytest.mark.parametrize(
     "field_name",
-    ["max_image_mb", "max_logs_mb", "max_log_rows"],
+    ["max_image_mb", "max_logs_mb", "max_log_rows", "vision_image_size"],
 )
 def test_upload_limits_must_be_positive(field_name: str) -> None:
     with pytest.raises(ValidationError):

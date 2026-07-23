@@ -64,6 +64,7 @@ def analyze_image_defect(
                 return score_image(
                     path,
                     memory_bank_path=str(memory_bank_path),
+                    image_size=resolved_settings.vision_image_size,
                 )
 
             scorer = configured_scorer
