@@ -1,19 +1,28 @@
 # FactoryLens Architecture
 
-FactoryLens is a local-first industrial defect copilot. The implemented
-foundation accepts and validates product images and manufacturing test logs,
-stores them in local files and PostgreSQL, exposes liveness/readiness signals,
-and provides an independently runnable hazelnut anomaly baseline. The target
-system will connect those foundations to five bounded tools through a LangChain
-agent so one `/analyze` request can return visual evidence, log findings,
-known-issue matches, a root-cause hypothesis, and an engineering report.
+> **Status update — 2026-07-13 (Phases 1–4 complete).** The end-to-end analysis
+> path is implemented: `/analyze` runs a LangChain agent over five bounded tools
+> and returns visual evidence, log findings, known-issue matches, a root-cause
+> hypothesis, and an engineering report. The Streamlit dashboard exists on
+> `origin/main` (`app_streamlit.py`, PR #29) — pull to get it locally.
+> Remaining Phase-5 items: live demo, video, and final security sign-off.
+
+FactoryLens is a local-first industrial defect copilot. It accepts and validates
+product images and manufacturing test logs, stores them in local files and
+PostgreSQL (pgvector), exposes liveness/readiness signals, and runs a hazelnut
+anomaly baseline (ResNet18 layer2+3 + coreset, 384-d). One `POST /analyze`
+request drives a LangChain agent across five bounded tools —
+`analyze_image_defect`, `query_test_logs`, `retrieve_known_issues`,
+`generate_root_cause_hypothesis`, `generate_engineering_report` — returning
+visual evidence, log findings, known-issue matches, a root-cause hypothesis, and
+a Markdown/PDF engineering report. LLM steps use `gpt-5.4-mini` when a key is
+configured and fall back to deterministic output otherwise.
 
 ## Component Architecture
 
-Solid green nodes are implemented in the repository. Orange dotted nodes are
-implemented only as stubs or standalone modules that are not yet connected to
-the end-to-end analysis route. Blue dashed nodes are planned in the locked MVP
-contract. Gray nodes are external actors, not repository components.
+Solid green nodes are implemented in the repository. Blue dashed nodes are
+external/optional. Gray nodes are external actors, not repository components.
+(As of 2026-07-13 the former stub/planned nodes are implemented.)
 
 ```mermaid
 flowchart TD
@@ -26,13 +35,13 @@ flowchart TD
 
     subgraph Client["Client"]
         Consumer["API consumer"]:::external
-        Dashboard["Streamlit dashboard"]:::planned
+        Dashboard["Streamlit dashboard<br/>app_streamlit.py (origin/main)"]:::implemented
     end
 
     subgraph API["FastAPI layer"]
         Health["GET /health"]:::implemented
         Readyz["GET /readyz"]:::implemented
-        Analyze["POST /analyze<br/>contract-valid stub"]:::stub
+        Analyze["POST /analyze<br/>full agent pipeline"]:::implemented
         UploadImage["POST /uploads/image"]:::implemented
         UploadLogs["POST /uploads/logs"]:::implemented
     end
@@ -48,31 +57,31 @@ flowchart TD
     end
 
     subgraph Vision["Vision baseline"]
-        Score["score_image<br/>PatchCore-style anomaly score"]:::stub
-        Heatmap["make_heatmap and extract_regions"]:::stub
+        Score["score_image<br/>PatchCore-style anomaly score"]:::implemented
+        Heatmap["make_heatmap and extract_regions"]:::implemented
     end
 
     subgraph Agent["Agent and bounded tools"]
-        BoundedAgent["LangChain bounded agent"]:::planned
-        ImageTool["analyze_image_defect"]:::planned
-        LogTool["query_test_logs"]:::planned
-        IssueTool["retrieve_known_issues"]:::planned
-        CauseTool["generate_root_cause_hypothesis"]:::planned
-        ReportTool["generate_engineering_report"]:::planned
+        BoundedAgent["LangChain bounded agent"]:::implemented
+        ImageTool["analyze_image_defect"]:::implemented
+        LogTool["query_test_logs"]:::implemented
+        IssueTool["retrieve_known_issues"]:::implemented
+        CauseTool["generate_root_cause_hypothesis"]:::implemented
+        ReportTool["generate_engineering_report"]:::implemented
     end
 
     subgraph Stores["Data stores"]
         UploadFiles["Local upload files"]:::implemented
-        HeatmapFiles["Local heatmap files<br/>vision module output"]:::stub
-        MemoryBank["Generated local memory bank<br/>data/memory_bank.npz"]:::stub
+        HeatmapFiles["Local heatmap files<br/>vision module output"]:::implemented
+        MemoryBank["Local memory bank<br/>data/memory_bank.npz (384-d)"]:::implemented
         Postgres["PostgreSQL 16<br/>pgvector extension enabled"]:::implemented
         TestLogs[("test_logs table")]:::implemented
-        KnownVectors[("Known-issue vectors")]:::planned
+        KnownVectors[("Known-issue vectors")]:::implemented
     end
 
     subgraph External["Optional external service"]
-        OpenAI["OpenAI"]:::planned
-        Fallback["No-key deterministic fallback<br/>with warnings"]:::planned
+        OpenAI["OpenAI<br/>gpt-5.4-mini (optional)"]:::external
+        Fallback["No-key deterministic fallback<br/>with warnings"]:::implemented
     end
 
     Consumer --> Health
@@ -99,10 +108,10 @@ flowchart TD
     Score --> MemoryBank
     Score --> Heatmap
     Heatmap --> HeatmapFiles
-    KnownDocs -. "planned indexing" .-> KnownVectors
-    Postgres -. "planned vector schema" .-> KnownVectors
+    KnownDocs -- "ingest_known_issues.py" --> KnownVectors
+    Postgres -- "pgvector schema" --> KnownVectors
 
-    Analyze -. "planned integration" .-> BoundedAgent
+    Analyze --> BoundedAgent
     BoundedAgent -. "calls" .-> ImageTool
     BoundedAgent -. "calls" .-> LogTool
     BoundedAgent -. "calls" .-> IssueTool
@@ -122,16 +131,16 @@ flowchart TD
     classDef external fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#1b1b1b;
 ```
 
-The vision nodes are marked as not integrated rather than planned because their
-implementations and tests exist today. No FastAPI route or tool wrapper calls
-them yet. Similarly, PostgreSQL runs from the pgvector image and `init_db`
-enables the extension, but the repository has no known-issue vector model or
-index.
+The vision nodes are now called by `analyze_image_defect`, which the `/analyze`
+route reaches through the bounded agent. PostgreSQL runs from the pgvector image,
+`init_db` enables the extension, and known-issue Markdown is embedded (MiniLM,
+384-d) and indexed via `scripts/ingest_known_issues.py`, then queried with a
+cosine `<=>` top-k search in `retrieve_known_issues`.
 
-## Target Analyze Workflow
+## Analyze Workflow
 
-This sequence is the target for Phases 3-4. It is not the behavior of the
-current `/analyze` stub.
+This sequence is implemented as of Phase 4. It is the behavior of the current
+`/analyze` route.
 
 ```mermaid
 sequenceDiagram
@@ -150,7 +159,7 @@ sequenceDiagram
     participant FB as Deterministic fallback
     participant RP as report tool
 
-    Note over C,RP: Target workflow only - planned for Phases 3-4
+    Note over C,RP: Implemented in Phase 4 - current /analyze behavior
     C->>API: image, optional logs, question, category
     API->>A: Start bounded tool workflow
     A->>IT: Analyze stored image
@@ -239,16 +248,16 @@ sequenceDiagram
 | Settings and upload limits | Implemented | `src/factorylens/config.py` |
 | SQLAlchemy sessions, `TestLog`, and `init_db` | Implemented | `src/factorylens/db/` |
 | PostgreSQL container and pgvector extension | Implemented | `docker-compose.yml`, `src/factorylens/db/init_db.py` |
-| `/analyze` structured response | Stub | `src/factorylens/main.py` returns a warning and default contract fields |
-| Vision anomaly score, heatmap, and regions | Implemented, not integrated | `src/factorylens/vision/` and `src/factorylens/vision/README.md` |
-| Known-issue Markdown corpus and loader | Implemented, not indexed | `assets/known_issues/`, `src/factorylens/data/known_issues.py` |
-| `analyze_image_defect` tool wrapper | Planned | `docs/MVP_SPEC.md` |
-| `query_test_logs` read-only tool | Planned | `docs/MVP_SPEC.md` |
-| `retrieve_known_issues` and vector index | Planned | `docs/MVP_SPEC.md`; no vector model exists in `src/factorylens/db/` |
-| Root-cause and report tools | Planned | `docs/MVP_SPEC.md` |
-| Bounded LangChain agent | Planned | `docs/MVP_SPEC.md`; dependencies are only in the optional `agent` extra |
-| OpenAI integration and no-key fallback | Planned | `docs/MVP_SPEC.md` |
-| Streamlit dashboard | Planned | `docs/MVP_SPEC.md`; no Streamlit application exists in the repository |
+| `/analyze` structured response | Implemented | `src/factorylens/main.py` `@app.post("/analyze")` drives the bounded agent |
+| Vision anomaly score, heatmap, and regions | Implemented, integrated | `src/factorylens/vision/`, called via `tools/analyze_image.py` |
+| Known-issue Markdown corpus, embed, and index | Implemented | `assets/known_issues/`, `scripts/ingest_known_issues.py`, pgvector `<=>` query |
+| `analyze_image_defect` tool wrapper | Implemented | `src/factorylens/tools/analyze_image.py` |
+| `query_test_logs` read-only tool | Implemented | `src/factorylens/tools/query_logs.py` (bound params, allow-listed) |
+| `retrieve_known_issues` and vector index | Implemented | `src/factorylens/tools/retrieve_known_issues.py` (MiniLM 384-d, top-k) |
+| Root-cause and report tools | Implemented | `src/factorylens/tools/root_cause.py`, `tools/report.py` (LLM + fallback) |
+| Bounded LangChain agent | Implemented | `src/factorylens/agents/investigation.py` (`create_agent`, 5 tools) |
+| OpenAI integration and no-key fallback | Implemented | `src/factorylens/tools/llm.py`; deterministic fallback in report/root-cause |
+| Streamlit dashboard | Implemented (origin/main) | `app_streamlit.py` (PR #29) — `git pull` to sync locally |
 
 ## Data Contracts
 

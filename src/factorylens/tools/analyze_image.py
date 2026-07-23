@@ -60,6 +60,9 @@ def analyze_image_defect(
         if scorer is None:
             from factorylens.vision.anomaly import score_image
 
+            # Extractor input size MUST match how the memory bank was built
+            # (v2 bundle used 512). A mismatch shifts scores and wrecks AUROC.
+            # Passed down so the torch-dependent extractor stays inside anomaly.
             def configured_scorer(path: str) -> tuple[float, Any]:
                 return score_image(
                     path,
