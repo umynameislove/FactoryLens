@@ -35,7 +35,7 @@ def test_settings_defaults_are_local_and_non_secret() -> None:
 
 @pytest.mark.parametrize(
     "field_name",
-    ["max_image_mb", "max_logs_mb", "max_log_rows"],
+    ["max_image_mb", "max_logs_mb", "max_log_rows", "vision_image_size"],
 )
 def test_upload_limits_must_be_positive(field_name: str) -> None:
     with pytest.raises(ValidationError):

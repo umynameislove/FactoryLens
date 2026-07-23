@@ -79,6 +79,7 @@ def test_public_vision_signatures_remain_compatible() -> None:
         "extractor",
         "max_patches_per_image",
         "seed",
+        "coreset_size",
     ]
     assert list(inspect.signature(score_image).parameters) == [
         "image_path",
@@ -95,6 +96,25 @@ def test_public_vision_signatures_remain_compatible() -> None:
         "distance_scale",
     ]
     assert list(inspect.signature(load_memory_bank).parameters) == ["path"]
+
+
+def test_build_memory_bank_honors_explicit_coreset_size() -> None:
+    class FakeExtractor:
+        def extract_patch_embeddings(self, image_path: str) -> np.ndarray:
+            return np.array(
+                [[1.0, 0.0], [0.9, 0.1], [0.0, 1.0], [0.1, 0.9]],
+                dtype=np.float32,
+            )
+
+    bank = build_memory_bank(
+        ["one.png", "two.png"],
+        out_path=None,
+        extractor=FakeExtractor(),
+        max_patches_per_image=4,
+        coreset_size=3,
+    )
+
+    assert bank.shape == (3, 2)
 
 
 def test_score_image_rejects_stale_single_layer_bank() -> None:

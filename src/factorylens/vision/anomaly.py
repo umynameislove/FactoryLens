@@ -25,6 +25,7 @@ def build_memory_bank(
     extractor: PatchEmbeddingExtractor | None = None,
     max_patches_per_image: int = 128,
     seed: int = 13,
+    coreset_size: int | None = None,
 ) -> np.ndarray:
     """Build a memory bank from normal images and optionally save it.
 
@@ -47,7 +48,7 @@ def build_memory_bank(
         )
 
     candidates = np.vstack(all_embeddings).astype(np.float32, copy=False)
-    target_rows = _coreset_target_size(len(candidates))
+    target_rows = _coreset_target_size(len(candidates), coreset_size=coreset_size)
     memory_bank = greedy_coreset(
         candidates,
         target_rows,
@@ -244,7 +245,15 @@ def _uniform_candidate_rows(
     return embeddings[indexes]
 
 
-def _coreset_target_size(candidate_count: int) -> int:
+def _coreset_target_size(
+    candidate_count: int,
+    *,
+    coreset_size: int | None = None,
+) -> int:
+    if coreset_size is not None:
+        if coreset_size <= 0:
+            raise ValueError("coreset_size must be positive")
+        return min(candidate_count, coreset_size)
     if candidate_count <= CORESET_MIN_ROWS:
         return candidate_count
     return min(
