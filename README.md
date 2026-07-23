@@ -115,6 +115,36 @@ curl http://127.0.0.1:8000/readyz    # readiness (SELECT 1; 503 if DB down)
 Optional extras: `.[agent]` (LLM agent), `.[vision]` (anomaly detector),
 `.[rag]` (local embedder), `.[reporting]` (PDF), `.[ui]` (Streamlit).
 
+### Full local pipeline (image → report)
+
+The API skeleton above runs on `.[dev]` alone. To run the real `/analyze` end-to-end,
+install every runtime extra, provide the vision data, and seed the known-issue store:
+
+```bash
+# 1. Full runtime deps
+pip install -e ".[vision,db,rag,agent,reporting,ui]"
+
+# 2. Vision data (local only, gitignored):
+#    data/mvtec/hazelnut/{train/good, test/<defect>}  +  data/memory_bank.npz
+#    Build the bank if you only have the images:
+python scripts/build_memory_bank.py
+
+# 3. Seed the known-issue vectors (run once)
+python scripts/ingest_known_issues.py
+
+# 4. Run the API (src layout → PYTHONPATH=src, or rely on the editable install)
+PYTHONPATH=src uvicorn factorylens.main:app --port 8000
+```
+
+**Notes learned the hard way:**
+
+- Scripts use a `src/` layout. If you see `No module named 'factorylens'`, prefix with
+  `PYTHONPATH=src` (pytest is already configured; plain `python`/`uvicorn` are not).
+- When running from the host, override the DB host: the app reads `DATABASE_URL`; change
+  `@db:` to `@localhost:` (Postgres is published on `127.0.0.1:5432`).
+- The MiniLM retriever model is public — if a stale local Hugging Face token causes a
+  `401`, unset it and set `HF_HUB_OFFLINE=1` (the model is cached after first download).
+
 ---
 
 ## Usage
@@ -144,10 +174,11 @@ Set via `.env` (never committed):
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string. Use host `db` inside Docker, `localhost` when running from the host machine. |
 | `OPENAI_API_KEY` | Enables the LLM path (omit to use the deterministic fallback) |
 | `OPENAI_MODEL` | LLM model id (default `gpt-5.4-mini`) |
-| `ANOMALY_THRESHOLD` | Anomaly decision threshold (default `0.3133`) |
+| `ANOMALY_THRESHOLD` | Anomaly decision threshold (default `0.31051757`, calibrated on the v2 memory bank) |
+| `VISION_IMAGE_SIZE` | Extractor input resize (default `512`). **Must match the resize used to build `memory_bank.npz`** — a mismatch shifts scores and collapses accuracy. |
 
 ---
 
@@ -164,6 +195,18 @@ Measured on the MVTec AD `hazelnut` subset and a hand-labeled retrieval gold set
 
 Semantic retrieval always places the correct known issue in the top-k passed to the LLM.
 
+**Anomaly detection — overall** (v2 memory bank, 391 train/good images, resize 512,
+scored on the full 110-image `hazelnut` test set):
+
+| Metric | Value |
+|---|---:|
+| AUROC | **0.9618** |
+| False positives on good | 4 / 40 |
+| False negatives on defect | 6 / 70 |
+
+Threshold `0.31051757` (Youden). Reproduce:
+`python scripts/eval_threshold_full.py --image-size 512 --threshold 0.31051757`.
+
 **Per-defect-type anomaly detection** (image-level AUROC):
 
 | crack | cut | hole | print |
@@ -171,6 +214,10 @@ Semantic retrieval always places the correct known issue in the top-k passed to 
 | 0.981 | 0.918 | 0.965 | 0.991 |
 
 Reproduce: `python scripts/eval_retrieval.py`, `python scripts/eval_per_type.py`.
+
+> Note: threshold and per-type figures are calibration checks on the same test set
+> (no held-out split), reported as evidence of separation — not as a validated
+> generalization claim.
 
 ---
 
