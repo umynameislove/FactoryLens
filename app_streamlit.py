@@ -19,8 +19,11 @@ if SRC_DIR.exists() and str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from factorylens.agents.investigation import run_analysis  # noqa: E402
+from factorylens.config import get_settings  # noqa: E402
 from factorylens.db.session import SessionLocal  # noqa: E402
+from factorylens.ingest.logs import ingest_log_bytes  # noqa: E402
 from factorylens.schemas import AnalysisResponse  # noqa: E402
+from sqlalchemy import text  # noqa: E402
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 EMPTY_SCENARIO = "None"
@@ -1543,6 +1546,7 @@ def run_analysis_request(
     image_preview: bytes | Path,
     uploaded_image: Any,
     category: str,
+    logs_source: bytes | Path | None = None,
 ) -> AnalysisResponse | None:
     temp_image_path: Path | None = None
     db = None
@@ -1554,6 +1558,20 @@ def run_analysis_request(
             analysis_image_path = Path(image_preview)
 
         db = SessionLocal()
+
+        # Scope log evidence to THIS run: reset the table, then ingest the
+        # selected logs so query_test_logs returns only this unit's rows.
+        # Without this the pipeline reports "no matching test logs".
+        settings = get_settings()
+        db.execute(text("TRUNCATE test_logs"))
+        db.commit()
+        if logs_source is not None:
+            if isinstance(logs_source, (bytes, bytearray)):
+                payload = bytes(logs_source)
+            else:
+                payload = Path(logs_source).read_bytes()
+            ingest_log_bytes(payload, db, settings)
+
         return run_analysis(
             str(analysis_image_path),
             db,
@@ -1714,6 +1732,7 @@ def main() -> None:
                     image_preview,
                     uploaded_image,
                     category,
+                    logs_source=csv_preview,
                 )
             if result is not None:
                 st.session_state[RESULT_STATE_KEY] = result
