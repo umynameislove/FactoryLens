@@ -81,7 +81,13 @@ def _run_agent(inv: Investigation, model: str) -> None:
     from langchain.agents import create_agent
     from langchain_openai import ChatOpenAI
 
-    llm = ChatOpenAI(model=model, temperature=0.3)
+    # Pass the key from settings so runtime does not depend on OPENAI_API_KEY
+    # being exported in the shell environment (settings read it from .env).
+    llm = ChatOpenAI(
+        model=model,
+        temperature=0.3,
+        api_key=get_settings().openai_api_key,
+    )
     agent = create_agent(
         llm,
         tools=_build_tools(inv),

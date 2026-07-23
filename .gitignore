@@ -33,6 +33,9 @@ outputs/
 *.sqlite
 *.db
 
+# Generated eval output (mutable; overwritten on every eval run)
+assets/eval_samples/eval_scores_full.csv
+
 # Secrets / env
 .env
 .env.*
